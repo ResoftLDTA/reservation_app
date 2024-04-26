@@ -1,6 +1,9 @@
-﻿// See https://aka.ms/new-console-template for more information
+﻿namespace ReservationApp;
 
-Console.WriteLine("Buenas tardes git.");
-Console.WriteLine("Maria pasò por acá");
-
-String mensaje = "HOLAAAAAAA";
+public class Program
+{
+    static void Main()
+    {
+        
+    }
+}
