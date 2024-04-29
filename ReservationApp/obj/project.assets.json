@@ -8,24 +8,26 @@
     "net8.0": []
   },
   "packageFolders": {
-    "/home/creep/.nuget/packages/": {}
+    "C:\\Users\\Aleja\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/home/creep/code_workshop/reservation_app/ReservationApp/ReservationApp.csproj",
+      "projectUniqueName": "C:\\Users\\Aleja\\reservation_app\\ReservationApp\\ReservationApp.csproj",
       "projectName": "ReservationApp",
-      "projectPath": "/home/creep/code_workshop/reservation_app/ReservationApp/ReservationApp.csproj",
-      "packagesPath": "/home/creep/.nuget/packages/",
-      "outputPath": "/home/creep/code_workshop/reservation_app/ReservationApp/obj/",
+      "projectPath": "C:\\Users\\Aleja\\reservation_app\\ReservationApp\\ReservationApp.csproj",
+      "packagesPath": "C:\\Users\\Aleja\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\Aleja\\reservation_app\\ReservationApp\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "/home/creep/.nuget/NuGet/NuGet.Config"
+        "C:\\Users\\Aleja\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
         "net8.0"
       ],
       "sources": {
+        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -54,18 +56,12 @@
         ],
         "assetTargetFallback": true,
         "warn": true,
-        "downloadDependencies": [
-          {
-            "name": "Microsoft.AspNetCore.App.Ref",
-            "version": "[8.0.4, 8.0.4]"
-          }
-        ],
         "frameworkReferences": {
           "Microsoft.NETCore.App": {
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/8.0.104/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.101/PortableRuntimeIdentifierGraph.json"
       }
     }
   }
