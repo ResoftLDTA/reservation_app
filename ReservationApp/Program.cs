@@ -4,6 +4,6 @@ public class Program
 {
     static void Main()
     {
-        Console.WriteLine("Hey, Backend!");
+        Console.WriteLine("Hey, backend_db_hotel");
     }
 }
