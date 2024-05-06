@@ -5,14 +5,20 @@ namespace ReservationApp;
 
 public class DbController
 {
-    static void Main()
+    public static void CargarArchivo()
+    {
+        // string filePath = "dbhotel.json";
+        string userPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+        Console.WriteLine($"Se detectó la ruta: {userPath}");
+    }
+    static void CargarArchivoPrueba()
     {
         // Nombre de la carpeta que deseas crear
         string nombreCarpeta = "MiCarpeta";
 
         try
         {
-            // Llamar al m�todo para crear la carpeta
+            // Llamar al metodo para crear la carpeta
             CrearCarpetaEnDirectorioUsuario(nombreCarpeta);
 
             Console.WriteLine($"La carpeta '{nombreCarpeta}' se ha creado exitosamente.");
