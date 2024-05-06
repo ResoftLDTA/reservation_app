@@ -1,13 +1,39 @@
 namespace ReservationApp;
 
-public class Admin : Staff
+using System;
+
 {
-    public float CalculateIncome(uint month)
+    public class Admin : Staff
     {
-    float income = 0
+        public Admin(string name, DbHotel db) : base(name, db)
+        {
+            // Constructor de la clase Admin que llama al constructor de la clase base (Staff)
+        }
+        
+        public float CalculateIncome(uint month)
+        {
+            float totalIncome = 0;
 
-    // luego se reemplaza el valor 0 de income por el proceso final para calcularlo segun month
+            // Obtenemos el primer día del mes pasado
+            DateTime lastMonthStart = DateTime.Now.AddMonths(-1).AddDays(-DateTime.Now.Day + 1);
 
-    return income;
+            // Obtenemos el primer día del mes actual
+            DateTime currentMonthStart = DateTime.Now.AddDays(-DateTime.Now.Day + 1);
+
+            // Filtramos las reservas que se hicieron el mes pasado
+            var lastMonthBookings = Db.bookings.Where(b => b.BookingDate >= lastMonthStart && b.BookingDate < currentMonthStart);
+
+            // Sumamos el precio de cada reserva
+            foreach (var booking in lastMonthBookings)
+            {
+                totalIncome += booking.Room.Type.Price * booking.BookedNights;
+            }
+
+            return totalIncome;
+        }
     }
 }
+    
+
+
+        
