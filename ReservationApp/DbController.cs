@@ -1,10 +1,10 @@
 using System;
 using System.IO;
+using Newtonsoft.Json;
 namespace ReservationApp;
 
 public class DbController
 {
-<<<<<<< HEAD
     static void Main()
     {
         // Nombre de la carpeta que deseas crear
@@ -12,14 +12,14 @@ public class DbController
 
         try
         {
-            // Llamar al método para crear la carpeta
+            // Llamar al mï¿½todo para crear la carpeta
             CrearCarpetaEnDirectorioUsuario(nombreCarpeta);
 
             Console.WriteLine($"La carpeta '{nombreCarpeta}' se ha creado exitosamente.");
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Ocurrió un error al intentar crear la carpeta: {ex.Message}");
+            Console.WriteLine($"Ocurriï¿½ un error al intentar crear la carpeta: {ex.Message}");
         }
 
         // Nombre del archivo que deseas crear
@@ -27,14 +27,14 @@ public class DbController
 
         try
         {
-            // Llamar al método para crear el archivo
+            // Llamar al mï¿½todo para crear el archivo
             CrearArchivoEnCarpeta(nombreArchivo);
 
             Console.WriteLine($"El archivo '{nombreArchivo}' se ha creado exitosamente.");
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Ocurrió un error al intentar crear el archivo: {ex.Message}");
+            Console.WriteLine($"Ocurriï¿½ un error al intentar crear el archivo: {ex.Message}");
         }
     }
 
@@ -91,12 +91,7 @@ public class DbController
         }
         catch (Exception ex)
         {
-            throw new InvalidOperationException($"Ocurrió un error al intentar crear el archivo: {ex.Message}");
+            throw new InvalidOperationException($"Ocurriï¿½ un error al intentar crear el archivo: {ex.Message}");
         }
     }
-
-
-=======
-    String path = "~/hotel.db";
->>>>>>> 18633ec9dad06d2f2428efdfeb0dfcf1699dbce7
 }

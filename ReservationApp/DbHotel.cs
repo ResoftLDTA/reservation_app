@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace ReservationApp;
 
 public class DbHotel
