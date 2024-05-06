@@ -1,6 +1,6 @@
 namespace ReservationApp;
 
-public class Receptionist
+public class Receptionist : Staff
 {
     
 }
