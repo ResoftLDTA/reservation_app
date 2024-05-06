@@ -4,6 +4,7 @@ namespace ReservationApp;
 
 public class DbController
 {
+<<<<<<< HEAD
     static void Main()
     {
         // Nombre de la carpeta que deseas crear
@@ -95,4 +96,7 @@ public class DbController
     }
 
 
+=======
+    String path = "~/hotel.db";
+>>>>>>> 18633ec9dad06d2f2428efdfeb0dfcf1699dbce7
 }
