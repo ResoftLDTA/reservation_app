@@ -1,16 +1,41 @@
 using System;
 using System.IO;
+using System.Net;
 using Newtonsoft.Json;
+
 namespace ReservationApp;
 
 public class DbController
 {
-    public static void CargarArchivo()
+    public static DbHotel CargarArchivo()
     {
-        // string filePath = "dbhotel.json";
-        string userPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-        Console.WriteLine($"Se detectó la ruta: {userPath}");
+        string fileName = "dbhotel.json";
+        string userDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+        Console.WriteLine($"Se detectó la ruta: {userDataPath}");
+
+        string filePath = Path.Combine(userDataPath, fileName);
+
+        if (Path.Exists(filePath))
+        {
+            using (FileStream fs = File.OpenRead(userDataPath))
+            {
+                string fileContent = JsonConvert.SerializeObject(fs);
+                DbHotel dbhotel = JsonConvert.DeserializeObject<DbHotel>(fileContent);
+
+                return dbhotel;
+            }
+        }
+        else
+        {
+            {
+                using (FileStream fs = File.Create(userDataPath))
+                {
+                    return new DbHotel();
+                }
+            }
+        }
     }
+
     static void CargarArchivoPrueba()
     {
         // Nombre de la carpeta que deseas crear
@@ -88,7 +113,9 @@ public class DbController
             if (!File.Exists(rutaArchivo))
             {
                 // Crear el archivo y cerrarlo inmediatamente
-                using (File.Create(rutaArchivo)) { }
+                using (File.Create(rutaArchivo))
+                {
+                }
             }
             else
             {
