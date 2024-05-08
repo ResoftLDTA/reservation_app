@@ -1,20 +1,24 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Aleja\\reservation_app\\ReservationApp\\ReservationApp.csproj": {}
+    "C:\\Users\\Victus\\reservation_app\\ReservationApp\\ReservationApp.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Aleja\\reservation_app\\ReservationApp\\ReservationApp.csproj": {
+    "C:\\Users\\Victus\\reservation_app\\ReservationApp\\ReservationApp.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Aleja\\reservation_app\\ReservationApp\\ReservationApp.csproj",
+        "projectUniqueName": "C:\\Users\\Victus\\reservation_app\\ReservationApp\\ReservationApp.csproj",
         "projectName": "ReservationApp",
-        "projectPath": "C:\\Users\\Aleja\\reservation_app\\ReservationApp\\ReservationApp.csproj",
-        "packagesPath": "C:\\Users\\Aleja\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Aleja\\reservation_app\\ReservationApp\\obj\\",
+        "projectPath": "C:\\Users\\Victus\\reservation_app\\ReservationApp\\ReservationApp.csproj",
+        "packagesPath": "C:\\Users\\Victus\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Victus\\reservation_app\\ReservationApp\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
         "configFilePaths": [
-          "C:\\Users\\Aleja\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Victus\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -39,6 +43,12 @@
       "frameworks": {
         "net8.0": {
           "targetAlias": "net8.0",
+          "dependencies": {
+            "Newtonsoft.Json": {
+              "target": "Package",
+              "version": "[13.0.3, )"
+            }
+          },
           "imports": [
             "net461",
             "net462",
@@ -55,7 +65,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.101/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.204/PortableRuntimeIdentifierGraph.json"
         }
       }
     }
