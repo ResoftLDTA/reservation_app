@@ -15,26 +15,50 @@ public class DbController
 
         string filePath = Path.Combine(userDataPath, fileName);
 
-        if (Path.Exists(filePath))
+        try
         {
-            using (FileStream fs = File.OpenRead(userDataPath))
-            {
-                string fileContent = JsonConvert.SerializeObject(fs);
-                DbHotel dbhotel = JsonConvert.DeserializeObject<DbHotel>(fileContent);
 
-                return dbhotel;
-            }
-        }
-        else
-        {
+            if (Path.Exists(filePath))
             {
-                using (FileStream fs = File.Create(userDataPath))
+                using (FileStream fs = File.OpenRead(userDataPath))
                 {
-                    return new DbHotel();
+                    string fileContent = JsonConvert.SerializeObject(fs);
+                    DbHotel dbhotel = JsonConvert.DeserializeObject<DbHotel>(fileContent);
+
+                    return dbhotel;
+                }
+            }
+            else
+            {
+                {
+                    using (FileStream fs = File.Create(userDataPath))
+                    {
+                        return new DbHotel();
+                    }
                 }
             }
         }
+        catch (System.IO.FileNotFoundException)
+        {
+            Console.WriteLine("El archivo JSON no se pudo encontrar.");
+        }
+        catch (System.IO.IOException ex)
+        {
+            Console.WriteLine($"Error de entrada/salida al leer el archivo JSON: {ex.Message}");
+        }
+        catch (JsonReaderException ex)
+        {
+            Console.WriteLine($"Error al leer el contenido del archivo JSON: {ex.Message}");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Se produjo un error inesperado: {ex.Message}");
+        }
+
+        // En caso de error, devolver un objeto DbHotel vacío
+        return new DbHotel();
     }
+
 
     static void CargarArchivoPrueba()
     {
@@ -65,7 +89,7 @@ public class DbController
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Ocurri� un error al intentar crear el archivo: {ex.Message}");
+            Console.WriteLine($"Ocurrio un error al intentar crear el archivo: {ex.Message}");
         }
     }
 
@@ -124,7 +148,10 @@ public class DbController
         }
         catch (Exception ex)
         {
-            throw new InvalidOperationException($"Ocurri� un error al intentar crear el archivo: {ex.Message}");
+            throw new InvalidOperationException($"Ocurrio un error al intentar crear el archivo: {ex.Message}");
         }
     }
 }
+
+
+
