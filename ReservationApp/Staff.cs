@@ -2,10 +2,10 @@ namespace ReservationApp;
 
 public class Staff
 {
-    private string _name;
+    protected string _name;
 
     public string Name => _name;
-    private DbHotel _db;
+    protected DbHotel _db;
     public DbHotel Db => _db;
 
     public Staff(string name, DbHotel db)
