@@ -39,9 +39,9 @@ public class Booking
     private float _price;
     public float Price => _price;
 
-    public Booking(Client client, Room room, DateTime start, uint bookedNights)
+    public Booking(Client client, Room room, DateTime start, uint bookedNights, uint id)
     {
-        //TODO: Implement logic to save _id as the last element in DBHotel' List<Booking>
+        _id = id;
         _client = client;
         _room = room;
         _start = start;

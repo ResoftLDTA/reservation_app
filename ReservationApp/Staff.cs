@@ -43,7 +43,7 @@ public class Staff
 
     public Booking Book(Room room, Client client, Booking booking)
     {
-        Booking book = new Booking(client, room, DateTime.Now, booking.BookedNights);
+        Booking book = new Booking(client, room, DateTime.Now, booking.BookedNights, (uint)(_db.bookings.Count + 1));
         Db.bookings.Add(book);
         return book;
     }
