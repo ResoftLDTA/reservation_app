@@ -38,16 +38,12 @@ public class Staff
      lógica del funcionamiento de la clase bookigns, pero por el momento creo que lo ideal sería copiarse el método con 
      los mismos parámetros. */
     {
-        //TODO: Preguntarle a Werner por qué es necesario el clientID para calcular el costo de una reserva.
         return roomType.Price * bookedNights;
     }
 
     public Booking Book(string clientName, uint clientId, DateTime startDate, uint bookedNights, RoomType desiredRoomType)
     {
-        //TODO: Preguntarle a Werner si buscar la habitación según su tipo de habitación.
-        //TODO: Preguntarla a Werner si se incluye la fecha de inicio de la reserva y las noches reservadas en la demo.
-        
-        // Se busca una habitación del tipo deseado que no esté ocupada y se obtiene un array
+        // Se busca una habitación del tipo deseado que no esté ocupada y se obtiene un array de habitaciones.
         var availableRoom = _db.rooms.Where(room => (room.Type == desiredRoomType) && (room.occupied == false)).ToArray();
         Room room = availableRoom[0];
         Booking book = new Booking(new Client(clientId, clientName), room, DateTime.Now, bookedNights, (uint)(_db.bookings.Count + 1));
