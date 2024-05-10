@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 
 namespace ReservationApp;
 
@@ -41,9 +42,15 @@ public class Staff
         return roomType.Price * bookedNights;
     }
 
-    public Booking Book(Room room, Client client, Booking booking)
+    public Booking Book(string clientName, uint clientId, DateTime startDate, uint bookedNights, RoomType desiredRoomType)
     {
-        Booking book = new Booking(client, room, DateTime.Now, booking.BookedNights, (uint)(_db.bookings.Count + 1));
+        //TODO: Preguntarle a Werner si buscar la habitación según su tipo de habitación.
+        //TODO: Preguntarla a Werner si se incluye la fecha de inicio de la reserva y las noches reservadas en la demo.
+        
+        // Se busca una habitación del tipo deseado que no esté ocupada y se obtiene un array
+        var availableRoom = _db.rooms.Where(room => (room.Type == desiredRoomType) && (room.occupied == false)).ToArray();
+        Room room = availableRoom[0];
+        Booking book = new Booking(new Client(clientId, clientName), room, DateTime.Now, bookedNights, (uint)(_db.bookings.Count + 1));
         Db.bookings.Add(book);
         return book;
     }
