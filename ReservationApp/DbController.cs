@@ -17,141 +17,37 @@ public class DbController
 
         try
         {
-
-            if (Path.Exists(filePath))
+            using (FileStream fs = File.OpenRead(userDataPath))
             {
-                using (FileStream fs = File.OpenRead(userDataPath))
-                {
-                    string fileContent = JsonConvert.SerializeObject(fs);
-                    DbHotel dbhotel = JsonConvert.DeserializeObject<DbHotel>(fileContent);
+                string fileContent = JsonConvert.SerializeObject(fs);
+                DbHotel dbhotel = JsonConvert.DeserializeObject<DbHotel>(fileContent);
 
-                    return dbhotel;
-                }
-            }
-            else
-            {
-                {
-                    using (FileStream fs = File.Create(userDataPath))
-                    {
-                        return new DbHotel();
-                    }
-                }
+                return dbhotel;
             }
         }
         catch (System.IO.FileNotFoundException)
         {
-            Console.WriteLine("El archivo JSON no se pudo encontrar.");
+            Console.WriteLine("El archivo JSON no se pudo encontrar. Se procede a crear uno nuevo.");
         }
         catch (System.IO.IOException ex)
         {
-            Console.WriteLine($"Error de entrada/salida al leer el archivo JSON: {ex.Message}");
+            Console.WriteLine($"Error de entrada/salida al leer el archivo JSON: {ex.Message}. Se creará un DBHotel nuevo.");
         }
         catch (JsonReaderException ex)
         {
-            Console.WriteLine($"Error al leer el contenido del archivo JSON: {ex.Message}");
+            Console.WriteLine($"Error al serializar el contenido del archivo JSON: {ex.Message}. Se creará un DBHotel nuevo.");
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Se produjo un error inesperado: {ex.Message}");
+            Console.WriteLine($"Se produjo un error inesperado: {ex.Message}. Se creará un DBHotel nuevo.");
         }
 
         // En caso de error, devolver un objeto DbHotel vacío
         return new DbHotel();
     }
 
-
-    static void CargarArchivoPrueba()
+    public static void SaveFile(DbHotel dbHotel)
     {
-        // Nombre de la carpeta que deseas crear
-        string nombreCarpeta = "MiCarpeta";
-
-        try
-        {
-            // Llamar al metodo para crear la carpeta
-            CrearCarpetaEnDirectorioUsuario(nombreCarpeta);
-
-            Console.WriteLine($"La carpeta '{nombreCarpeta}' se ha creado exitosamente.");
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Ocurri� un error al intentar crear la carpeta: {ex.Message}");
-        }
-
-        // Nombre del archivo que deseas crear
-        string nombreArchivo = "MiArchivo.txt";
-
-        try
-        {
-            // Llamar al m�todo para crear el archivo
-            CrearArchivoEnCarpeta(nombreArchivo);
-
-            Console.WriteLine($"El archivo '{nombreArchivo}' se ha creado exitosamente.");
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Ocurrio un error al intentar crear el archivo: {ex.Message}");
-        }
-    }
-
-    static void CrearCarpetaEnDirectorioUsuario(string nombreCarpeta)
-    {
-        // Obtener la ruta base del directorio del usuario actual
-        string rutaBase = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-
-        // Concatenar la ruta base con el nombre de la carpeta que deseas crear
-        string rutaCarpeta = Path.Combine(rutaBase, nombreCarpeta);
-
-        // Verificar si la carpeta no existe antes de intentar crearla
-        if (!Directory.Exists(rutaCarpeta))
-        {
-            // Crear la carpeta
-            Directory.CreateDirectory(rutaCarpeta);
-        }
-        else
-        {
-            throw new InvalidOperationException($"La carpeta '{nombreCarpeta}' ya existe en {rutaCarpeta}");
-        }
-    }
-
-    static void CrearArchivoEnCarpeta(string nombreArchivo)
-    {
-        try
-        {
-            // Obtener la ruta base del directorio del usuario actual
-            string rutaBase = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-
-            // Concatenar la ruta base con el nombre de la carpeta "MiCarpeta"
-            string rutaCarpeta = Path.Combine(rutaBase, "MiCarpeta");
-
-            // Verificar si la carpeta "Archivos" no existe antes de intentar crearla
-            if (!Directory.Exists(rutaCarpeta))
-            {
-                // Crear la carpeta "Archivos"
-                Directory.CreateDirectory(rutaCarpeta);
-            }
-
-            // Concatenar la ruta de la carpeta "Archivos" con el nombre del archivo
-            string rutaArchivo = Path.Combine(rutaCarpeta, nombreArchivo);
-
-            // Verificar si el archivo no existe antes de intentar crearlo
-            if (!File.Exists(rutaArchivo))
-            {
-                // Crear el archivo y cerrarlo inmediatamente
-                using (File.Create(rutaArchivo))
-                {
-                }
-            }
-            else
-            {
-                throw new InvalidOperationException($"El archivo '{nombreArchivo}' ya existe en {rutaArchivo}");
-            }
-        }
-        catch (Exception ex)
-        {
-            throw new InvalidOperationException($"Ocurrio un error al intentar crear el archivo: {ex.Message}");
-        }
+        //TODO: Implementar la lógica necesaria para guardar un json con el contenido de dbHotel.
     }
 }
-
-
-
