@@ -14,12 +14,6 @@ public class Admin : Staff
     {
         float totalIncome = 0;
 
-        // Obtenemos el primer día del mes pasado
-        DateTime lastMonthStart = DateTime.Now.AddMonths(-1).AddDays(-DateTime.Now.Day + 1);
-
-        // Obtenemos el primer día del mes actual
-        DateTime currentMonthStart = DateTime.Now.AddDays(-DateTime.Now.Day + 1);
-
         // Filtramos las reservas que se hicieron el mes pasado
         var bookingsByGivenMonth = _db.bookings.Where(booking => booking.Start.Month == month).ToList();
 
