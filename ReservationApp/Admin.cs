@@ -21,11 +21,10 @@ public class Admin : Staff
         DateTime currentMonthStart = DateTime.Now.AddDays(-DateTime.Now.Day + 1);
 
         // Filtramos las reservas que se hicieron el mes pasado
-        var lastMonthBookings =
-            Db.bookings.Where(b => b.BookingDate >= lastMonthStart && b.BookingDate < currentMonthStart);
+        var bookingsByGivenMonth = _db.bookings.Where(booking => booking.Start.Month == month).ToList();
 
         // Sumamos el precio de cada reserva
-        foreach (var booking in lastMonthBookings)
+        foreach (var booking in bookingsByGivenMonth)
         {
             totalIncome += booking.Room.Type.Price * booking.BookedNights;
         }
