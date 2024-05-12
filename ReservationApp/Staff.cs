@@ -45,10 +45,19 @@ public class Staff
     {
         // Se busca una habitación del tipo deseado que no esté ocupada y se obtiene un array de habitaciones.
         var availableRoom = _db.rooms.Where(room => (room.Type == desiredRoomType) && (room.occupied == false)).ToArray();
-        Room room = availableRoom[0];
-        Booking book = new Booking(new Client(clientId, clientName), room, DateTime.Now, bookedNights, (uint)(_db.bookings.Count + 1));
-        Db.bookings.Add(book);
-        return book;
+
+        if (availableRoom.Length > 0) // Verificar si hay al menos una habitación disponible
+        {
+            Room room = availableRoom[0];
+            Booking book = new Booking(new Client(clientId, clientName), room, DateTime.Now, bookedNights, (uint)(_db.bookings.Count + 1));
+            Db.bookings.Add(book);
+            return book;
+        }
+        else
+        {
+            Console.WriteLine("No hay habitaciones disponibles del tipo deseado.");
+            return null;
+        }
     }
 
     public void UndoBook(Booking bookToRemove)

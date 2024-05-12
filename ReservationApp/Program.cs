@@ -16,5 +16,7 @@ public class Program
         
         Frontend f = new Frontend(dbHotel, admin);
         f.Run();
+
+        DbController.SaveFile(dbHotel);
     }
 }
