@@ -26,7 +26,7 @@ public class Admin : Staff
         return totalIncome;
     }
     
-    public void CrearHabitación(RoomType roomType)
+    public void CreateRoom(RoomType roomType)
     {
         _db.rooms.Append(new Room(roomType, (uint)(_db.rooms.Count + 1)));
     }

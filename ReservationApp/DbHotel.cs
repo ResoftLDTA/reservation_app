@@ -8,4 +8,10 @@ public class DbHotel
      para inicializar las listas. */
     public List<Room> rooms;
     public List<Booking> bookings;
+
+    public DbHotel()
+    {
+        rooms = new List<Room>();
+        bookings = new List<Booking>();
+    }
 }
