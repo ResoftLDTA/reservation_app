@@ -48,6 +48,23 @@ public class DbController
 
     public static void SaveFile(DbHotel dbHotel)
     {
-        //TODO: Implementar la lógica necesaria para guardar un json con el contenido de dbHotel.
+        string fileName = "dbhotel.json";
+        string userDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+        string filePath = Path.Combine(userDataPath, fileName);
+
+        try
+        {
+            string jsonContent = JsonConvert.SerializeObject(dbHotel);
+            File.WriteAllText(filePath, jsonContent);
+            Console.WriteLine("Datos guardados exitosamente en el archivo JSON.");
+        }
+        catch (IOException ex)
+        {
+            Console.WriteLine($"Error de entrada/salida al escribir en el archivo JSON: {ex.Message}");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Se produjo un error inesperado al guardar los datos en el archivo JSON: {ex.Message}");
+        }
     }
 }
