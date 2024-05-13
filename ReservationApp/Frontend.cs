@@ -28,10 +28,10 @@ public class Frontend
 
     private void ListBookings()
     {
-        foreach (Booking booking in _dbHotel.bookings)
+        foreach (Booking booking in _dbHotel.Bookings)
         {
             Console.WriteLine("**********************************");
-            Console.WriteLine($"Reserva no. {_dbHotel.bookings.IndexOf(booking)}");
+            Console.WriteLine($"Reserva no. {_dbHotel.Bookings.IndexOf(booking)}");
             Console.WriteLine($"Cliente {booking.Client.Name}, id {booking.Client.Id}\n");
             Console.WriteLine($"Habitación no. {booking.Room.Id}, tipo {booking.Room.Type.Type}\n”");
             Console.WriteLine($"Reserva desde {booking.Start.Date} hasta el {booking.End.Date}\n");

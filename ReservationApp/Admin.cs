@@ -15,7 +15,7 @@ public class Admin : Staff
         float totalIncome = 0;
 
         // Filtramos las reservas que se hicieron el mes pasado
-        var bookingsByGivenMonth = _db.bookings.Where(booking => booking.Start.Month == month).ToList();
+        var bookingsByGivenMonth = _db.Bookings.Where(booking => booking.Start.Month == month).ToList();
 
         // Sumamos el precio de cada reserva
         foreach (var booking in bookingsByGivenMonth)
@@ -28,6 +28,6 @@ public class Admin : Staff
     
     public void CreateRoom(RoomType roomType)
     {
-        _db.rooms.Add(new Room(roomType, (uint)(_db.rooms.Count + 1)));
+        _db.Rooms.Add(new Room(roomType, (uint)(_db.Rooms.Count + 1)));
     }
 }

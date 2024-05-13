@@ -20,7 +20,7 @@ public class Staff
     public bool GetRoomsAvailability(RoomType roomType)
         /* Este método devuelve True si hay una habitación disponible del tipo roomType. Falso si no hay una disponible. */
     {
-        foreach (var room in _db.rooms)
+        foreach (var room in _db.Rooms)
         {
             if (room.Type == roomType && room.occupied == false)
             {
@@ -44,13 +44,13 @@ public class Staff
     public Booking Book(string clientName, uint clientId, DateTime startDate, uint bookedNights, RoomType desiredRoomType)
     {
         // Se busca una habitación del tipo deseado que no esté ocupada y se obtiene un array de habitaciones.
-        var availableRoom = _db.rooms.Where(room => (room.Type == desiredRoomType) && (room.occupied == false)).ToArray();
+        var availableRoom = _db.Rooms.Where(room => (room.Type == desiredRoomType) && (room.occupied == false)).ToArray();
 
         if (availableRoom.Length > 0) // Verificar si hay al menos una habitación disponible
         {
             Room room = availableRoom[0];
-            Booking book = new Booking(new Client(clientId, clientName), room, DateTime.Now, bookedNights, (uint)(_db.bookings.Count + 1));
-            Db.bookings.Add(book);
+            Booking book = new Booking(new Client(clientId, clientName), room, DateTime.Now, bookedNights, (uint)(_db.Bookings.Count + 1));
+            Db.Bookings.Add(book);
             return book;
         }
         else
@@ -62,9 +62,9 @@ public class Staff
 
     public void UndoBook(Booking bookToRemove)
     {
-        if (Db.bookings.Contains(bookToRemove))
+        if (Db.Bookings.Contains(bookToRemove))
         {
-            Db.bookings.Remove(bookToRemove);
+            Db.Bookings.Remove(bookToRemove);
             Console.WriteLine("Reserva deshecha");
         }
         else
