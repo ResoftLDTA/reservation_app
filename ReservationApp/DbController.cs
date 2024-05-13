@@ -42,8 +42,37 @@ public class DbController
             Console.WriteLine($"Se produjo un error inesperado: {ex.Message}. Se creará un DBHotel nuevo.");
         }
 
-        // En caso de error, devolver un objeto DbHotel vacío
-        return new DbHotel();
+        // En caso de error, devolver un objeto DbHotel con las habitaciones
+        return CreateDefaultDbHotel();
+    }
+
+    private static DbHotel CreateDefaultDbHotel()
+    {
+        DbHotel dbHotel = new DbHotel();
+        Admin admin = new Admin("Default", dbHotel);
+
+        // Crear 10 habitaciones sencillas
+        for (int i = 1; i <= 10; i++)
+        {
+            RoomType simple =  new RoomType("Simple", 1, 100000);
+            admin.CreateRoom(simple);
+        }
+
+        // Crear 10 habitaciones dobles
+        for (int i = 1; i <= 10; i++)
+        {
+            RoomType doble = new RoomType("Doble", 2, 180000);
+            admin.CreateRoom(doble);
+        }
+
+        // Crear 10 habitaciones matrimoniales
+        for (int i = 1; i <= 10; i++)
+        {
+            RoomType matrimonial = new RoomType("Matrimonial", 4, 250000);
+            admin.CreateRoom(matrimonial);
+        }
+
+        return dbHotel;
     }
 
     public static void SaveFile(DbHotel dbHotel)
