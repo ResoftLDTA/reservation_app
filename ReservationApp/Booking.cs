@@ -25,6 +25,7 @@ public class Booking
     {
         if (_end.Date == DateTime.Today)
         {
+            _expired = true;
             return true;
         }
         else
