@@ -7,19 +7,21 @@ namespace ReservationApp;
 
 public class DbController
 {
+    private static string _fileName = "dbhotel.json";
+    private static string _resoftFolderName = "Resoft";
+
     public static DbHotel CargarArchivo()
     {
-        string fileName = "dbhotel.json";
         string userDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
         Console.WriteLine($"Se detectó la ruta: {userDataPath}");
 
-        string filePath = Path.Combine(userDataPath, fileName);
+        string filePath = Path.Combine(userDataPath, _resoftFolderName, _fileName);
 
         try
         {
-            using (FileStream fs = File.OpenRead(userDataPath))
+            using (StreamReader reader = File.OpenText(filePath))
             {
-                string fileContent = JsonConvert.SerializeObject(fs);
+                string fileContent = reader.ReadToEnd();
                 DbHotel dbhotel = JsonConvert.DeserializeObject<DbHotel>(fileContent);
 
                 return dbhotel;
@@ -31,11 +33,13 @@ public class DbController
         }
         catch (System.IO.IOException ex)
         {
-            Console.WriteLine($"Error de entrada/salida al leer el archivo JSON: {ex.Message}. Se creará un DBHotel nuevo.");
+            Console.WriteLine(
+                $"Error de entrada/salida al leer el archivo JSON: {ex.Message}. Se creará un DBHotel nuevo.");
         }
         catch (JsonReaderException ex)
         {
-            Console.WriteLine($"Error al serializar el contenido del archivo JSON: {ex.Message}. Se creará un DBHotel nuevo.");
+            Console.WriteLine(
+                $"Error al serializar el contenido del archivo JSON: {ex.Message}. Se creará un DBHotel nuevo.");
         }
         catch (Exception ex)
         {
@@ -48,13 +52,17 @@ public class DbController
 
     public static void SaveFile(DbHotel dbHotel)
     {
-        string fileName = "dbhotel.json";
+        // Se obtiene la ruta de guardado de archivos y se crea la ruta donde va a estar almacenado dbhotel.json.
         string userDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-        string filePath = Path.Combine(userDataPath, fileName);
+        string filePath = Path.Combine(userDataPath, _resoftFolderName, _fileName);
 
         try
         {
+            // Se crea la carpeta en caso de que no exista.
+            Directory.CreateDirectory(Path.Combine(userDataPath, _resoftFolderName));
+
             string jsonContent = JsonConvert.SerializeObject(dbHotel);
+
             File.WriteAllText(filePath, jsonContent);
             Console.WriteLine("Datos guardados exitosamente en el archivo JSON.");
         }
