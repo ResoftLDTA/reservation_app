@@ -23,8 +23,12 @@ public class Booking
 
     public bool GetExpiredStatus()
     {
+        // Este método verifica si la reserva termino, y si es así y no se había actualizado el estado de la reserva, se modifica. 
+        //TODO: Esta lógica no debería hacerse desde un getter. Pasar la verificación y modificación a otro lado en el que tenga más sentido.
+
         if (_end.Date == DateTime.Today)
         {
+            _expired = true;
             return true;
         }
         else
@@ -39,9 +43,9 @@ public class Booking
     private float _price;
     public float Price => _price;
 
-    public Booking(Client client, Room room, DateTime start, uint bookedNights)
+    public Booking(Client client, Room room, DateTime start, uint bookedNights, uint id)
     {
-        //TODO: Implement logic to save _id as the last element in DBHotel' List<Booking>
+        _id = id;
         _client = client;
         _room = room;
         _start = start;

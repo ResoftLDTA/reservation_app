@@ -1,11 +1,14 @@
+using System;
+using System.Linq;
+
 namespace ReservationApp;
 
 public class Staff
 {
-    private string _name;
+    protected string _name;
 
     public string Name => _name;
-    private DbHotel _db;
+    protected DbHotel _db;
     public DbHotel Db => _db;
 
     public Staff(string name, DbHotel db)
@@ -17,7 +20,7 @@ public class Staff
     public bool GetRoomsAvailability(RoomType roomType)
         /* Este método devuelve True si hay una habitación disponible del tipo roomType. Falso si no hay una disponible. */
     {
-        foreach (var room in _db.rooms)
+        foreach (var room in _db.Rooms)
         {
             if (room.Type == roomType && room.occupied == false)
             {
@@ -35,22 +38,33 @@ public class Staff
      lógica del funcionamiento de la clase bookigns, pero por el momento creo que lo ideal sería copiarse el método con 
      los mismos parámetros. */
     {
-        //TODO: Preguntarle a Werner por qué es necesario el clientID para calcular el costo de una reserva.
         return roomType.Price * bookedNights;
     }
 
-    public Booking Book(Room room, Client client, Booking booking)
+    public Booking Book(string clientName, uint clientId, DateTime startDate, uint bookedNights, RoomType desiredRoomType)
     {
-        Booking book = new Booking(client, room, DateTime.Now, booking.BookedNights);
-        Db.bookings.Add(book);
-        return book;
+        // Se busca una habitación del tipo deseado que no esté ocupada y se obtiene un array de habitaciones.
+        var availableRoom = _db.Rooms.Where(room => (room.Type == desiredRoomType) && (room.occupied == false)).ToArray();
+
+        if (availableRoom.Length > 0) // Verificar si hay al menos una habitación disponible
+        {
+            Room room = availableRoom[0];
+            Booking book = new Booking(new Client(clientId, clientName), room, DateTime.Now, bookedNights, (uint)(_db.Bookings.Count + 1));
+            Db.Bookings.Add(book);
+            return book;
+        }
+        else
+        {
+            Console.WriteLine("No hay habitaciones disponibles del tipo deseado.");
+            return null;
+        }
     }
 
     public void UndoBook(Booking bookToRemove)
     {
-        if (Db.bookings.Contains(bookToRemove))
+        if (Db.Bookings.Contains(bookToRemove))
         {
-            Db.bookings.Remove(bookToRemove);
+            Db.Bookings.Remove(bookToRemove);
             Console.WriteLine("Reserva deshecha");
         }
         else

@@ -11,10 +11,10 @@ public class Room
     
     public bool occupied;
 
-    public Room(RoomType type)
+    public Room(RoomType type, uint id)
     {
         _type = type;
-        //TODO: Implement logic for _id
+        _id = id;
         occupied = false;
     }
 }
