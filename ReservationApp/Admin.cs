@@ -28,6 +28,6 @@ public class Admin : Staff
     
     public void CreateRoom(RoomType roomType)
     {
-        _db.rooms.Append(new Room(roomType, (uint)(_db.rooms.Count + 1)));
+        _db.rooms.Add(new Room(roomType, (uint)(_db.rooms.Count + 1)));
     }
 }
