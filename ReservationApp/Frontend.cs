@@ -86,5 +86,81 @@ public class Frontend
         } while (true);
 
         Client client = new Client(clientId, clientName);
+
+        Console.WriteLine("Introduce la duración de la reserva en noches:");
+        uint bookedNights;
+        do
+        {
+            try
+            {
+                string unparsedBookedNights = Console.ReadLine();
+                if (string.IsNullOrEmpty(unparsedBookedNights))
+                {
+                    throw new NullReferenceException("La duración de la reserva no puede estar vacía.");
+                }
+                bookedNights = uint.Parse(unparsedBookedNights);
+                break;
+            }
+            catch (ArgumentNullException nullException)
+            {
+                Console.WriteLine(nullException.Message);
+            }
+            catch (FormatException)
+            {
+                Console.WriteLine("No has introducido un número válido de noches.");
+            }
+        } while (true);
+
+        // Se muestran las opciones de habitaciones disponibles y solicitar al usuario que elija una.
+        Console.WriteLine("Introduce el tipo de habitación deseado:");
+        Console.WriteLine("1) Habitación Individual");
+        Console.WriteLine("2) Habitación Doble");
+        Console.WriteLine("3) Suite");
+
+        RoomType desiredRoomType;
+        do
+        {
+            string choice = Console.ReadLine();
+            switch (choice)
+            {
+                case "1":
+                    desiredRoomType = RoomType.Individual;
+                    break;
+                case "2":
+                    desiredRoomType = RoomType.Doble;
+                    break;
+                case "3":
+                    desiredRoomType = RoomType.Suite;
+                    break;
+                default:
+                    Console.WriteLine("Opción no válida");
+                    continue;
+            }
+
+            if (!_staff.GetRoomsAvailability(desiredRoomType))
+            {
+                Console.WriteLine("Lo siento, no hay habitaciones disponibles del tipo deseado.");
+                continue;
+            }
+
+            // Calcula el precio de la reserva
+            float bookingPrice = _staff.GetBookingPrice(clientId, desiredRoomType, bookedNights);
+
+
+            // Donde se realiza la reserva
+            Booking newBooking = _staff.Book(clientName, clientId, DateTime.Now, bookedNights, desiredRoomType);
+
+            if (newBooking != null)
+            {
+                Console.WriteLine("Reserva creada exitosamente.");
+            }
+            else
+            {
+                Console.WriteLine("Error al crear la reserva.");
+            }
+
+            break; // Sale del bucle una vez que se ha realizado la reserva.
+        } while (true);
+
     }
 }
