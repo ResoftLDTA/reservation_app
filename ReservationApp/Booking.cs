@@ -23,6 +23,9 @@ public class Booking
 
     public bool GetExpiredStatus()
     {
+        // Este método verifica si la reserva termino, y si es así y no se había actualizado el estado de la reserva, se modifica. 
+        //TODO: Esta lógica no debería hacerse desde un getter. Pasar la verificación y modificación a otro lado en el que tenga más sentido.
+
         if (_end.Date == DateTime.Today)
         {
             _expired = true;
