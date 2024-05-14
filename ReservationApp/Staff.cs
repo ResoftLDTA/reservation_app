@@ -72,4 +72,21 @@ public class Staff
             Console.WriteLine("La reserva especificada no existe");
         }
     }
+
+    public void CancelBooking(int bookingId)
+    {
+        // Buscar la reserva por su ID
+        Booking bookingToRemove = Db.Bookings.FirstOrDefault(booking => booking.Id == bookingId);
+
+        if (bookingToRemove != null)
+        {
+            // Eliminar la reserva de la lista
+            Db.Bookings.Remove(bookingToRemove);
+            Console.WriteLine("Reserva cancelada exitosamente.");
+        }
+        else
+        {
+            Console.WriteLine("La reserva especificada no existe.");
+        }
+    }
 }

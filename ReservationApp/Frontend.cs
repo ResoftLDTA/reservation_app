@@ -11,6 +11,38 @@ public class Frontend
     {
         _dbHotel = dbHotel;
         _staff = staff;
+
+
+        public Frontend(DbHotel dbHotel, Staff staff)
+        {
+            _dbHotel = dbHotel;
+            _staff = staff;
+        }
+
+        public void Run()
+        {
+            Menu();
+            string choice = Console.ReadLine();
+            switch (choice)
+            {
+                case "1":
+                    ListBookings();
+                    break;
+                case "2":
+                    CreateBooking();
+                    break;
+                case "3":
+                    CancelBooking();
+                    break;
+                default:
+                    Console.WriteLine("Opción no válida");
+                    break;
+            }
+        }
+
+
+
+
     }
 
     public void Run()
@@ -24,6 +56,7 @@ public class Frontend
         Console.WriteLine("Bienvenido a Reservation App.");
         Console.WriteLine("1) Para listar las reservas");
         Console.WriteLine("2) Para crear una reserva");
+        Console.WriteLine("3) Para cancelar una reserva");
     }
 
     private void ListBookings()
@@ -161,6 +194,36 @@ public class Frontend
 
             break; // Sale del bucle una vez que se ha realizado la reserva.
         } while (true);
+
+        private void CancelBooking()
+        {
+            Console.WriteLine("Introduce el ID de la reserva que deseas cancelar:");
+            int bookingId;
+            do
+            {
+                try
+                {
+                    string unparsedBookingId = Console.ReadLine();
+                    if (string.IsNullOrEmpty(unparsedBookingId))
+                    {
+                        throw new NullReferenceException("El ID de la reserva no puede estar vacío.");
+                    }
+                    bookingId = int.Parse(unparsedBookingId);
+                    break;
+                }
+                catch (ArgumentNullException nullException)
+                {
+                    Console.WriteLine(nullException.Message);
+                }
+                catch (FormatException)
+                {
+                    Console.WriteLine("No has introducido un ID válido.");
+                }
+            } while (true);
+
+            // Llamar al método de cancelar reserva en el backend
+            _staff.CancelBooking(bookingId);
+        }
 
     }
 }
