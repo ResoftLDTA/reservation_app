@@ -157,24 +157,12 @@ public class Frontend
             if (!_staff.GetRoomsAvailability(desiredRoomType))
             {
                 Console.WriteLine("Lo siento, no hay habitaciones disponibles del tipo deseado.");
-                continue;
+                break;
             }
-
-            // Calcula el precio de la reserva
-            float bookingPrice = _staff.GetBookingPrice(clientId, desiredRoomType, bookedNights);
-
-
+            
             // Donde se realiza la reserva
             Booking newBooking = _staff.Book(clientName, clientId, DateTime.Now, bookedNights, desiredRoomType);
-
-            if (newBooking != null)
-            {
-                Console.WriteLine("Reserva creada exitosamente.");
-            }
-            else
-            {
-                Console.WriteLine("Error al crear la reserva.");
-            }
+            Console.WriteLine("Reserva creada exitosamente.");
 
             break; // Sale del bucle una vez que se ha realizado la reserva.
         } while (true);
