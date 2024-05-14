@@ -4,12 +4,10 @@ namespace ReservationApp;
 
 public class Frontend
 {
-    private DbHotel _dbHotel;
     private Staff _staff;
 
-    public Frontend(DbHotel dbHotel, Staff staff)
+    public Frontend(Staff staff)
     {
-        _dbHotel = dbHotel;
         _staff = staff;
     }
 
@@ -44,7 +42,7 @@ public class Frontend
 
     private void ListBookings()
     {
-        foreach (Booking booking in _dbHotel.Bookings)
+        foreach (Booking booking in _staff.Db.Bookings)
         {
             Console.WriteLine("**********************************");
             Console.WriteLine($"Reserva no. {booking.Id}");

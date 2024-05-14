@@ -8,7 +8,7 @@ public class Program
     {
         DbHotel dbHotel = DbController.CargarArchivo();
         Admin admin = new Admin("Juan Carlos", dbHotel);
-        Frontend f = new Frontend(dbHotel, admin);
+        Frontend f = new Frontend(admin);
         f.Run();
 
         DbController.SaveFile(dbHotel);
