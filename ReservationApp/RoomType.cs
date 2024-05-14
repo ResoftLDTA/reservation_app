@@ -34,5 +34,8 @@ public class RoomType
     }
 
     public void SetPrice(Admin admin, float newPrice) => _price = newPrice;
-    
+
+    public static RoomType Simple = new RoomType("Sencillo", 1, 100000);
+    public static RoomType Double = new RoomType("Doble", 2, 180000);
+    public static RoomType Matrimonial = new RoomType("Matrimonial", 2, 300000);
 }

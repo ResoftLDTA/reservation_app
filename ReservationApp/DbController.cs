@@ -50,7 +50,7 @@ public class DbController
         return CreateDefaultDbHotel();
     }
 
-    private static DbHotel CreateDefaultDbHotel()
+    public static DbHotel CreateDefaultDbHotel()
     {
         DbHotel dbHotel = new DbHotel();
         Admin admin = new Admin("Default", dbHotel);
@@ -58,22 +58,19 @@ public class DbController
         // Crear 10 habitaciones sencillas
         for (int i = 1; i <= 10; i++)
         {
-            RoomType simple =  new RoomType("Simple", 1, 100000);
-            admin.CreateRoom(simple);
+            admin.CreateRoom(RoomType.Simple);
         }
 
         // Crear 10 habitaciones dobles
         for (int i = 1; i <= 10; i++)
         {
-            RoomType doble = new RoomType("Doble", 2, 180000);
-            admin.CreateRoom(doble);
+            admin.CreateRoom(RoomType.Double);
         }
 
         // Crear 10 habitaciones matrimoniales
         for (int i = 1; i <= 10; i++)
         {
-            RoomType matrimonial = new RoomType("Matrimonial", 4, 250000);
-            admin.CreateRoom(matrimonial);
+            admin.CreateRoom(RoomType.Matrimonial);
         }
 
         return dbHotel;
