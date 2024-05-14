@@ -49,9 +49,12 @@ public class Booking
         _client = client;
         _room = room;
         _start = start;
-        _end = start + TimeSpan.FromDays(bookedNights);
+        _end = start.AddDays(bookedNights);
         _expired = false;
         _price = _room.Type.Price * bookedNights;
         _room.occupied = true;
     }
 }
+
+
+

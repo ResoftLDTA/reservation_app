@@ -13,23 +13,31 @@ public class Frontend
 
     public void Run()
     {
-        Menu();
-        string choice = Console.ReadLine();
-        switch (choice)
+        bool run = true;
+        while (run)
         {
-            case "1":
-                ListBookings();
-                break;
-            case "2":
-                CreateBooking();
-                break;
-            case "3":
-                CancelBooking();
-                break;
-            default:
-                Console.WriteLine("Opción no válida");
-                break;
+            Menu();
+            string choice = Console.ReadLine();
+            switch (choice)
+            {
+                case "1":
+                    ListBookings();
+                    break;
+                case "2":
+                    CreateBooking();
+                    break;
+                case "3":
+                    CancelBooking();
+                    break;
+                case "4":
+                    run = false;
+                    break;
+                default:
+                    Console.WriteLine("Opción no válida");
+                    break;
+            }
         }
+        
     }
 
     private void Menu()
@@ -38,6 +46,7 @@ public class Frontend
         Console.WriteLine("1) Para listar las reservas");
         Console.WriteLine("2) Para crear una reserva");
         Console.WriteLine("3) Para cancelar una reserva");
+        Console.WriteLine("4) Para salir");
     }
 
     private void ListBookings()

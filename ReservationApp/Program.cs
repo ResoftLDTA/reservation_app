@@ -8,7 +8,9 @@ public class Program
     {
         Admin admin = new Admin("Juan Carlos", DbController.CargarArchivo());
         Frontend f = new Frontend(admin);
+        bool run = true;
         f.Run();
+        
 
         DbController.SaveFile(admin.Db);
     }
