@@ -55,10 +55,10 @@ public class Frontend
         {
             Console.WriteLine("**********************************");
             Console.WriteLine($"Reserva no. {booking.Id}");
-            Console.WriteLine($"Cliente {booking.Client.Name}, id {booking.Client.Id}\n");
-            Console.WriteLine($"Habitación no. {booking.Room.Id}, tipo {booking.Room.Type.Type}\n”");
-            Console.WriteLine($"Reserva desde {booking.Start.Date} hasta el {booking.End.Date}\n");
-            Console.WriteLine($"Estuvo {booking.BookedNights}, para un costo total de {booking.Price}\n\n");
+            Console.WriteLine($"Cliente {booking.Client.Name}, id {booking.Client.Id}");
+            Console.WriteLine($"Habitación no. {booking.Room.Id}, tipo {booking.Room.Type.Type}");
+            Console.WriteLine($"Reserva desde {booking.Start.ToShortDateString()} hasta el {booking.End.ToShortDateString()}");
+            Console.WriteLine($"Estuvo {booking.BookedNights} noches, para un costo total de {booking.Price}\n\n");
         }
     }
 
