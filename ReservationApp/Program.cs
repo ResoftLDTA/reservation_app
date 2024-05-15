@@ -1,9 +1,17 @@
-﻿namespace ReservationApp;
+﻿using System;
+
+namespace ReservationApp;
 
 public class Program
 {
     static void Main()
     {
-        Console.WriteLine("Hey, frontend!");
+        Admin admin = new Admin("Juan Carlos", DbController.CargarArchivo());
+        Frontend f = new Frontend(admin);
+        bool run = true;
+        f.Run();
+        
+
+        DbController.SaveFile(admin.Db);
     }
 }
