@@ -37,7 +37,6 @@ public class Frontend
                     break;
             }
         }
-        
     }
 
     private void Menu()
@@ -57,7 +56,8 @@ public class Frontend
             Console.WriteLine($"Reserva no. {booking.Id}");
             Console.WriteLine($"Cliente {booking.Client.Name}, id {booking.Client.Id}");
             Console.WriteLine($"Habitación no. {booking.Room.Id}, tipo {booking.Room.Type.Type}");
-            Console.WriteLine($"Reserva desde {booking.Start.ToShortDateString()} hasta el {booking.End.ToShortDateString()}");
+            Console.WriteLine(
+                $"Reserva desde {booking.Start.ToShortDateString()} hasta el {booking.End.ToShortDateString()}");
             Console.WriteLine($"Estuvo {booking.BookedNights} noches, para un costo total de {booking.Price}\n\n");
         }
     }
@@ -168,7 +168,7 @@ public class Frontend
                 Console.WriteLine("Lo siento, no hay habitaciones disponibles del tipo deseado.");
                 break;
             }
-            
+
             // Donde se realiza la reserva
             Booking newBooking = _staff.Book(clientName, clientId, DateTime.Now, bookedNights, desiredRoomType);
             Console.WriteLine("Reserva creada exitosamente.");
