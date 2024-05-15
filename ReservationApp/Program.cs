@@ -1,17 +1,16 @@
-﻿using System;
+﻿using Gtk;
 
-namespace ReservationApp;
-
-public class Program
+namespace ReservationApp
 {
-    static void Main()
+    public class Program
     {
-        DbHotel dbHotel = DbController.CargarArchivo();
-
-        Admin admin = new Admin("Juan Carlos", dbHotel);
-        Frontend f = new Frontend(dbHotel, admin);
-        f.Run();
-
-        DbController.SaveFile(dbHotel);
+        public static void Main()
+        {
+            Application.Init();
+            BuscarReservaScreen search = new BuscarReservaScreen()
+            ReservaMuestraScreen screen = new ReservaMuestraScreen();
+            screen.ShowAll();
+            Application.Run();
+        }
     }
 }
