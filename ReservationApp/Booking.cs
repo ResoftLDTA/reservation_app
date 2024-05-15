@@ -53,5 +53,6 @@ public class Booking
         _expired = false;
         _price = _room.Type.Price * bookedNights;
         _room.occupied = true;
+        _bookedNights = bookedNights;
     }
 }
