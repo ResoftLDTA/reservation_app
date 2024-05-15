@@ -4,19 +4,40 @@ namespace ReservationApp;
 
 public class Frontend
 {
-    private DbHotel _dbHotel;
     private Staff _staff;
 
-    public Frontend(DbHotel dbHotel, Staff staff)
+    public Frontend(Staff staff)
     {
-        _dbHotel = dbHotel;
         _staff = staff;
     }
 
     public void Run()
     {
-        Menu();
-        ListBookings();
+        bool run = true;
+        while (run)
+        {
+            Menu();
+            string choice = Console.ReadLine();
+            switch (choice)
+            {
+                case "1":
+                    ListBookings();
+                    break;
+                case "2":
+                    CreateBooking();
+                    break;
+                case "3":
+                    CancelBooking();
+                    break;
+                case "4":
+                    run = false;
+                    break;
+                default:
+                    Console.WriteLine("Opción no válida");
+                    break;
+            }
+        }
+        
     }
 
     private void Menu()
@@ -24,18 +45,20 @@ public class Frontend
         Console.WriteLine("Bienvenido a Reservation App.");
         Console.WriteLine("1) Para listar las reservas");
         Console.WriteLine("2) Para crear una reserva");
+        Console.WriteLine("3) Para cancelar una reserva");
+        Console.WriteLine("4) Para salir");
     }
 
     private void ListBookings()
     {
-        foreach (Booking booking in _dbHotel.Bookings)
+        foreach (Booking booking in _staff.Db.Bookings)
         {
             Console.WriteLine("**********************************");
-            Console.WriteLine($"Reserva no. {_dbHotel.Bookings.IndexOf(booking)}");
-            Console.WriteLine($"Cliente {booking.Client.Name}, id {booking.Client.Id}\n");
-            Console.WriteLine($"Habitación no. {booking.Room.Id}, tipo {booking.Room.Type.Type}\n”");
-            Console.WriteLine($"Reserva desde {booking.Start.Date} hasta el {booking.End.Date}\n");
-            Console.WriteLine($"Estuvo {booking.BookedNights}, para un costo total de {booking.Price}\n\n");
+            Console.WriteLine($"Reserva no. {booking.Id}");
+            Console.WriteLine($"Cliente {booking.Client.Name}, id {booking.Client.Id}");
+            Console.WriteLine($"Habitación no. {booking.Room.Id}, tipo {booking.Room.Type.Type}");
+            Console.WriteLine($"Reserva desde {booking.Start.ToShortDateString()} hasta el {booking.End.ToShortDateString()}");
+            Console.WriteLine($"Estuvo {booking.BookedNights} noches, para un costo total de {booking.Price}\n\n");
         }
     }
 
@@ -52,6 +75,7 @@ public class Frontend
                 {
                     throw new NullReferenceException("El ID del cliente no puede estar vacío.");
                 }
+
                 clientId = uint.Parse(unparsedClientID);
                 break;
             }
@@ -77,6 +101,7 @@ public class Frontend
                 {
                     throw new NullReferenceException("El nombre del cliente no puede estar vacío.");
                 }
+
                 break;
             }
             catch (NullReferenceException nullReferenceException)
@@ -98,6 +123,7 @@ public class Frontend
                 {
                     throw new NullReferenceException("La duración de la reserva no puede estar vacía.");
                 }
+
                 bookedNights = uint.Parse(unparsedBookedNights);
                 break;
             }
@@ -124,13 +150,13 @@ public class Frontend
             switch (choice)
             {
                 case "1":
-                    desiredRoomType = RoomType.Individual;
+                    desiredRoomType = RoomType.Simple;
                     break;
                 case "2":
-                    desiredRoomType = RoomType.Doble;
+                    desiredRoomType = RoomType.Double;
                     break;
                 case "3":
-                    desiredRoomType = RoomType.Suite;
+                    desiredRoomType = RoomType.Matrimonial;
                     break;
                 default:
                     Console.WriteLine("Opción no válida");
@@ -140,27 +166,45 @@ public class Frontend
             if (!_staff.GetRoomsAvailability(desiredRoomType))
             {
                 Console.WriteLine("Lo siento, no hay habitaciones disponibles del tipo deseado.");
-                continue;
+                break;
             }
-
-            // Calcula el precio de la reserva
-            float bookingPrice = _staff.GetBookingPrice(clientId, desiredRoomType, bookedNights);
-
-
+            
             // Donde se realiza la reserva
             Booking newBooking = _staff.Book(clientName, clientId, DateTime.Now, bookedNights, desiredRoomType);
-
-            if (newBooking != null)
-            {
-                Console.WriteLine("Reserva creada exitosamente.");
-            }
-            else
-            {
-                Console.WriteLine("Error al crear la reserva.");
-            }
+            Console.WriteLine("Reserva creada exitosamente.");
 
             break; // Sale del bucle una vez que se ha realizado la reserva.
         } while (true);
+    }
 
+    private void CancelBooking()
+    {
+        Console.WriteLine("Introduce el ID de la reserva que deseas cancelar:");
+        int bookingId;
+        do
+        {
+            try
+            {
+                string unparsedBookingId = Console.ReadLine();
+                if (string.IsNullOrEmpty(unparsedBookingId))
+                {
+                    throw new NullReferenceException("El ID de la reserva no puede estar vacío.");
+                }
+
+                bookingId = int.Parse(unparsedBookingId);
+                break;
+            }
+            catch (ArgumentNullException nullException)
+            {
+                Console.WriteLine(nullException.Message);
+            }
+            catch (FormatException)
+            {
+                Console.WriteLine("No has introducido un ID válido.");
+            }
+        } while (true);
+
+        // Llamar al método de cancelar reserva en el backend
+        _staff.CancelBooking(bookingId);
     }
 }

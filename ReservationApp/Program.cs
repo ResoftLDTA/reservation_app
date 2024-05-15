@@ -6,12 +6,12 @@ public class Program
 {
     static void Main()
     {
-        DbHotel dbHotel = DbController.CargarArchivo();
-
-        Admin admin = new Admin("Juan Carlos", dbHotel);
-        Frontend f = new Frontend(dbHotel, admin);
+        Admin admin = new Admin("Juan Carlos", DbController.CargarArchivo());
+        Frontend f = new Frontend(admin);
+        bool run = true;
         f.Run();
+        
 
-        DbController.SaveFile(dbHotel);
+        DbController.SaveFile(admin.Db);
     }
 }
