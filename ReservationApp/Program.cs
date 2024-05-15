@@ -7,7 +7,7 @@ namespace ReservationApp
         public static void Main()
         {
             Application.Init();
-            BuscarReservaScreen search = new BuscarReservaScreen()
+            BuscarReservaScreen search = new BuscarReservaScreen();
             ReservaMuestraScreen screen = new ReservaMuestraScreen();
             screen.ShowAll();
             Application.Run();
