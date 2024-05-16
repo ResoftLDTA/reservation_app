@@ -9,8 +9,8 @@ namespace ReservationApp
     public class ReceptionistWindow : Window
     {
         private Receptionist _receptionist;
-        private ListStore roomStore;
-        private VBox mainArea; // Contenedor principal donde cambiaremos los subpaneles
+        private ListStore _roomStore;
+        private VBox _mainArea; // Contenedor principal donde cambiaremos los subpaneles
         private List<RoomType> _roomTypes = new List<RoomType> { RoomType.Simple, RoomType.Double, RoomType.Matrimonial };
 
         public ReceptionistWindow(string username) : base("Recepcionista - " + username)
@@ -57,11 +57,11 @@ namespace ReservationApp
             navBar.PackStart(loadBookingsButton, false, false, 10);
 
             // Crear el área principal
-            mainArea = new VBox(false, 10) { Margin = 10 };
+            _mainArea = new VBox(false, 10) { Margin = 10 };
 
             // Añadir etiqueta de bienvenida
             Label welcomeLabel = new Label("Bienvenido, " + username);
-            mainArea.PackStart(welcomeLabel, false, false, 10);
+            _mainArea.PackStart(welcomeLabel, false, false, 10);
 
             // Eventos de los botones
             homeButton.Clicked += (sender, e) => { ReturnToMainWindow(); };
@@ -71,7 +71,7 @@ namespace ReservationApp
 
             // Añadir barra lateral y área principal al contenedor principal
             contentBox.PackStart(navBar, false, false, 0);
-            contentBox.PackStart(mainArea, true, true, 0);
+            contentBox.PackStart(_mainArea, true, true, 0);
 
             // Añadir contenedor principal a la ventana
             mainContainer.PackStart(contentBox, true, true, 0);
@@ -83,8 +83,8 @@ namespace ReservationApp
         private TreeView CreateRoomTreeView()
         {
             // Configurar el store para el TreeView
-            roomStore = new ListStore(typeof(string), typeof(int), typeof(string));
-            TreeView treeView = new TreeView(roomStore);
+            _roomStore = new ListStore(typeof(string), typeof(int), typeof(string));
+            TreeView treeView = new TreeView(_roomStore);
 
             // Definir las columnas
             TreeViewColumn roomTypeColumn = new TreeViewColumn { Title = "Tipo de habitación" };
@@ -113,12 +113,12 @@ namespace ReservationApp
         private void LoadRoomData()
         {
             // Limpiar datos anteriores
-            roomStore.Clear();
+            _roomStore.Clear();
 
             // Añadir datos al ListStore
             foreach (Room room in _receptionist.Db.Rooms)
             {
-                roomStore.AppendValues(room.Type.Type, room.Id, room.occupied ? "Ocupada" : "Disponible");
+                _roomStore.AppendValues(room.Type.Type, room.Id, room.occupied ? "Ocupada" : "Disponible");
             }
         }
 
@@ -135,7 +135,7 @@ namespace ReservationApp
                 Text = "Ver habitaciones",
                 Markup = "<span size='large'>Ver habitaciones</span>"
             };
-            mainArea.PackStart(titleLabel, false, false, 10);
+            _mainArea.PackStart(titleLabel, false, false, 10);
 
             // Crear la tabla de habitaciones
             TreeView roomTreeView = CreateRoomTreeView();
@@ -143,11 +143,11 @@ namespace ReservationApp
             // Añadir la tabla de habitaciones al área principal
             ScrolledWindow scrolledWindow = new ScrolledWindow();
             scrolledWindow.Add(roomTreeView);
-            mainArea.PackStart(scrolledWindow, true, true, 10);
+            _mainArea.PackStart(scrolledWindow, true, true, 10);
 
             // Cargar los datos
             LoadRoomData();
-            mainArea.ShowAll();
+            _mainArea.ShowAll();
         }
 
         private void LoadBookRoomPanel()
@@ -161,7 +161,7 @@ namespace ReservationApp
                 Text = "Reservar Habitación",
                 Markup = "<span size='large'>Reservar Habitación</span>"
             };
-            mainArea.PackStart(titleLabel, false, false, 10);
+            _mainArea.PackStart(titleLabel, false, false, 10);
 
             // Crear un HBox para dividir en dos columnas
             HBox columnsBox = new HBox(false, 20);
@@ -280,7 +280,7 @@ namespace ReservationApp
             columnsBox.PackStart(column2, true, true, 10);
 
             // Añadir el HBox con las dos columnas al área principal
-            mainArea.PackStart(columnsBox, true, true, 10);
+            _mainArea.PackStart(columnsBox, true, true, 10);
 
             // Método para calcular el precio
             void CalculatePrice()
@@ -311,7 +311,7 @@ namespace ReservationApp
             dateOutCalendar.DaySelected += (sender, e) => CalculatePrice();
             roomTypeComboBox.Changed += (sender, e) => CalculatePrice();
 
-            mainArea.ShowAll();
+            _mainArea.ShowAll();
         }
 
         private void LoadBookingListPanel()
@@ -325,7 +325,7 @@ namespace ReservationApp
                 Text = "Lista de reservas",
                 Markup = "<span size='large'>Lista de Reservas</span>"
             };
-            mainArea.PackStart(titleLabel, false, false, 10);
+            _mainArea.PackStart(titleLabel, false, false, 10);
 
             // Crear un contenedor para mostrar las reservas y el total
             VBox invoiceBox = new VBox();
@@ -335,7 +335,7 @@ namespace ReservationApp
             scrolledWindow.Add(invoiceBox);
             scrolledWindow.VscrollbarPolicy = PolicyType.Automatic;
             scrolledWindow.HscrollbarPolicy = PolicyType.Automatic;
-            mainArea.PackStart(scrolledWindow, true, true, 10);
+            _mainArea.PackStart(scrolledWindow, true, true, 10);
 
             // Iterar sobre las reservas y agregarlas a la factura
             double totalAmount = 0;
@@ -394,15 +394,15 @@ namespace ReservationApp
             invoiceBox.PackEnd(totalLabel, false, false, 10);
 
             // Mostrar todo
-            mainArea.ShowAll();
+            _mainArea.ShowAll();
         }
 
 
         private void ClearMainArea()
         {
-            foreach (Widget widget in mainArea)
+            foreach (Widget widget in _mainArea)
             {
-                mainArea.Remove(widget);
+                _mainArea.Remove(widget);
                 widget.Destroy();
             }
         }
