@@ -1,4 +1,5 @@
 using Gtk;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 
@@ -7,12 +8,14 @@ namespace ReservationApp
     public class ReceptionistWindow : Window
     {
         private Receptionist _receptionist;
+        private DbHotel _dbHotel;
         private ListStore roomStore;
         private VBox mainArea; // Contenedor principal donde cambiaremos los subpaneles
 
         public ReceptionistWindow(string username) : base("Recepcionista - " + username)
         {
             _receptionist = new Receptionist(username, DbController.CargarArchivo());
+            _dbHotel = DbController.CargarArchivo();
 
             SetDefaultSize(1024, 768);
             SetPosition(WindowPosition.Center);
@@ -50,8 +53,8 @@ namespace ReservationApp
             Button bookRoomButton = new Button("Reservar Habitación");
             navBar.PackStart(bookRoomButton, false, false, 10);
 
-            Button calculateBookingButton = new Button("Calcular Reserva");
-            navBar.PackStart(calculateBookingButton, false, false, 10);
+            Button loadBookingsButton = new Button("Ver reservas activas");
+            navBar.PackStart(loadBookingsButton, false, false, 10);
 
             // Crear el área principal
             mainArea = new VBox(false, 10)
@@ -76,9 +79,9 @@ namespace ReservationApp
             };
 
             // Evento del botón "Calcular Reserva"
-            calculateBookingButton.Clicked += (sender, e) =>
+            loadBookingsButton.Clicked += (sender, e) =>
             {
-                LoadCalculateBookingPanel();
+                LoadBookingListPanel();
             };
 
             // Añadir barra lateral y área principal al contenedor principal
@@ -208,7 +211,7 @@ namespace ReservationApp
             mainArea.ShowAll();
         }
 
-        private void LoadCalculateBookingPanel()
+        private void LoadBookingListPanel()
         {
             // Limpiar el área principal
             ClearMainArea();
@@ -216,52 +219,63 @@ namespace ReservationApp
             // Añadir título
             Label titleLabel = new Label
             {
-                Text = "Calcular Reserva",
-                Markup = "<span size='large'>Calcular Reserva</span>"
+                Text = "Lista de reservas",
+                Markup = "<span size='large'>Lista de Reservas</span>"
             };
             mainArea.PackStart(titleLabel, false, false, 10);
 
-            // Formularios para calcular una reserva
-            Label nameLabel = new Label("Nombre:");
-            Entry nameEntry = new Entry();
-            Label roomIdLabel = new Label("ID de habitación:");
-            Entry roomIdEntry = new Entry();
-            Label dateInLabel = new Label("Fecha de entrada:");
-            Entry dateInEntry = new Entry();
-            Label dateOutLabel = new Label("Fecha de salida:");
-            Entry dateOutEntry = new Entry();
+            // Obtener las reservas del objeto _dbHotel
+            List<Booking> bookings = _dbHotel.Bookings;
 
-            Button calculateButton = new Button("Calcular");
-            calculateButton.Clicked += (sender, e) =>
+            // Crear un contenedor para mostrar las reservas y el total
+            VBox invoiceBox = new VBox();
+            mainArea.PackStart(invoiceBox, true, true, 10);
+
+            // Iterar sobre las reservas y agregarlas a la factura
+            double totalAmount = 0;
+            foreach (var booking in bookings)
             {
-                // Lógica para calcular reserva (puedes añadir funcionalidad aquí)
-                string name = nameEntry.Text;
-                int roomId = Int32.Parse(roomIdEntry.Text);
-                DateTime dateIn = DateTime.Parse(dateInEntry.Text);
-                DateTime dateOut = DateTime.Parse(dateOutEntry.Text);
+                // Calcular la duración de la reserva
+                TimeSpan duration = booking.End - booking.Start;
 
-                // Muestra el resultado, puedes reemplazar esto con funcionalidad real
-                MessageDialog resultDialog = new MessageDialog(
-                    this,
-                    DialogFlags.Modal,
-                    MessageType.Info,
-                    ButtonsType.Ok,
-                    $"Calculando reserva para {name} en la habitación {roomId} desde {dateIn} hasta {dateOut}. Funcionalidad aún no implementada."
-                );
-                resultDialog.Run();
-                resultDialog.Destroy();
-            };
+                // Calcular el precio total de la reserva
+                double totalPrice = duration.Days * booking.Room.Type.Price;
 
-            // Añadir formularios al área principal
-            mainArea.PackStart(nameLabel, false, false, 10);
-            mainArea.PackStart(nameEntry, false, false, 10);
-            mainArea.PackStart(roomIdLabel, false, false, 10);
-            mainArea.PackStart(roomIdEntry, false, false, 10);
-            mainArea.PackStart(dateInLabel, false, false, 10);
-            mainArea.PackStart(dateInEntry, false, false, 10);
-            mainArea.PackStart(dateOutLabel, false, false, 10);
-            mainArea.PackStart(dateOutEntry, false, false, 10);
-            mainArea.PackStart(calculateButton, false, false, 10);
+                // Crear un marco para la reserva
+                Frame bookingFrame = new Frame();
+                bookingFrame.BorderWidth = 5;
+                bookingFrame.ShadowType = ShadowType.Out;
+
+                // Detalles de la reserva
+                Label bookingIdLabel = new Label($"Reserva #{booking.Id}");
+                Label clientLabel = new Label($"Cliente: {booking.Client.Name}");
+                Label roomLabel = new Label($"Habitación: {booking.Room.Id}");
+                Label startLabel = new Label($"Inicio: {booking.Start}");
+                Label endLabel = new Label($"Fin: {booking.End}");
+                Label priceLabel = new Label($"Precio Total: {totalPrice}");
+
+                // Crear una disposición para los detalles de la reserva
+                VBox bookingDetailsBox = new VBox();
+                bookingDetailsBox.PackStart(bookingIdLabel, false, false, 0);
+                bookingDetailsBox.PackStart(clientLabel, false, false, 0);
+                bookingDetailsBox.PackStart(roomLabel, false, false, 0);
+                bookingDetailsBox.PackStart(startLabel, false, false, 0);
+                bookingDetailsBox.PackStart(endLabel, false, false, 0);
+                bookingDetailsBox.PackStart(priceLabel, false, false, 0);
+
+                // Agregar los detalles de la reserva al marco
+                bookingFrame.Add(bookingDetailsBox);
+
+                // Agregar el marco a la factura
+                invoiceBox.PackStart(bookingFrame, false, false, 10);
+
+                // Agregar el precio total al total general
+                totalAmount += totalPrice;
+            }
+
+            // Mostrar el total general
+            Label totalLabel = new Label($"Total General: {totalAmount}");
+            invoiceBox.PackEnd(totalLabel, false, false, 10);
 
             mainArea.ShowAll();
         }
