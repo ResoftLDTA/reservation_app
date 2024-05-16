@@ -251,66 +251,70 @@ namespace ReservationApp
             mainArea.ShowAll();
         }
 
-        private void LoadBookingListPanel()
-        {
-            // Limpiar el área principal
-            ClearMainArea();
+        private void LoadBookingListPanel() {
+    // Limpiar el área principal
+    ClearMainArea();
 
-            // Añadir título
-            Label titleLabel = new Label
-            {
-                Text = "Lista de reservas",
-                Markup = "<span size='large'>Lista de Reservas</span>"
-            };
-            mainArea.PackStart(titleLabel, false, false, 10);
+    // Añadir título
+    Label titleLabel = new Label {
+        Text = "Lista de reservas",
+        Markup = "<span size='large'>Lista de Reservas</span>"
+    };
+    mainArea.PackStart(titleLabel, false, false, 10);
 
-            // Crear un contenedor para mostrar las reservas y el total
-            VBox invoiceBox = new VBox();
-            mainArea.PackStart(invoiceBox, true, true, 10);
+    // Crear un contenedor para mostrar las reservas y el total
+    VBox invoiceBox = new VBox();
 
-            // Iterar sobre las reservas y agregarlas a la factura
-            double totalAmount = 0;
-            foreach (var booking in _receptionist.Db.Bookings)
-            {
+    // Crear ScrolledWindow y agregar invoiceBox
+    ScrolledWindow scrolledWindow = new ScrolledWindow();
+    scrolledWindow.Add(invoiceBox);
+    scrolledWindow.VscrollbarPolicy = PolicyType.Automatic;
+    scrolledWindow.HscrollbarPolicy = PolicyType.Automatic;
 
-                // Crear un marco para la reserva
-                Frame bookingFrame = new Frame();
-                bookingFrame.BorderWidth = 5;
-                bookingFrame.ShadowType = ShadowType.Out;
+    mainArea.PackStart(scrolledWindow, true, true, 10);
 
-                // Detalles de la reserva
-                Label bookingIdLabel = new Label($"Reserva #{booking.Id}");
-                Label clientLabel = new Label($"Cliente: {booking.Client.Name}");
-                Label roomLabel = new Label($"Habitación: {booking.Room.Id}");
-                Label startLabel = new Label($"Inicio: {booking.Start}");
-                Label endLabel = new Label($"Fin: {booking.End}");
-                Label priceLabel = new Label($"Precio Total: {booking.Price}");
+    // Iterar sobre las reservas y agregarlas a la factura
+    double totalAmount = 0;
+    foreach (var booking in _receptionist.Db.Bookings) {
+        // Crear un marco para la reserva
+        Frame bookingFrame = new Frame();
+        bookingFrame.BorderWidth = 5;
+        bookingFrame.ShadowType = ShadowType.Out;
 
-                // Crear una disposición para los detalles de la reserva
-                VBox bookingDetailsBox = new VBox();
-                bookingDetailsBox.PackStart(bookingIdLabel, false, false, 0);
-                bookingDetailsBox.PackStart(clientLabel, false, false, 0);
-                bookingDetailsBox.PackStart(roomLabel, false, false, 0);
-                bookingDetailsBox.PackStart(startLabel, false, false, 0);
-                bookingDetailsBox.PackStart(endLabel, false, false, 0);
-                bookingDetailsBox.PackStart(priceLabel, false, false, 0);
+        // Detalles de la reserva
+        Label bookingIdLabel = new Label($"Reserva #{booking.Id}");
+        Label clientLabel = new Label($"Cliente: {booking.Client.Name}");
+        Label roomLabel = new Label($"Habitación: {booking.Room.Id}");
+        Label startLabel = new Label($"Inicio: {booking.Start}");
+        Label endLabel = new Label($"Fin: {booking.End}");
+        Label priceLabel = new Label($"Precio Total: {booking.Price}");
 
-                // Agregar los detalles de la reserva al marco
-                bookingFrame.Add(bookingDetailsBox);
+        // Crear una disposición para los detalles de la reserva
+        VBox bookingDetailsBox = new VBox();
+        bookingDetailsBox.PackStart(bookingIdLabel, false, false, 0);
+        bookingDetailsBox.PackStart(clientLabel, false, false, 0);
+        bookingDetailsBox.PackStart(roomLabel, false, false, 0);
+        bookingDetailsBox.PackStart(startLabel, false, false, 0);
+        bookingDetailsBox.PackStart(endLabel, false, false, 0);
+        bookingDetailsBox.PackStart(priceLabel, false, false, 0);
 
-                // Agregar el marco a la factura
-                invoiceBox.PackStart(bookingFrame, false, false, 10);
+        // Agregar los detalles de la reserva al marco
+        bookingFrame.Add(bookingDetailsBox);
 
-                // Agregar el precio total al total general
-                totalAmount += booking.Price;
-            }
+        // Agregar el marco a la factura
+        invoiceBox.PackStart(bookingFrame, false, false, 10);
 
-            // Mostrar el total general
-            Label totalLabel = new Label($"Total General: {totalAmount}");
-            invoiceBox.PackEnd(totalLabel, false, false, 10);
+        // Agregar el precio total al total general
+        totalAmount += booking.Price;
+    }
 
-            mainArea.ShowAll();
-        }
+    // Mostrar el total general
+    Label totalLabel = new Label($"Total General: {totalAmount}");
+    invoiceBox.PackEnd(totalLabel, false, false, 10);
+
+    // Mostrar todo
+    mainArea.ShowAll();
+}
 
         private void ClearMainArea()
         {
