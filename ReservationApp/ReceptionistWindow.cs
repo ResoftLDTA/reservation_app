@@ -15,7 +15,7 @@ namespace ReservationApp
 
         public ReceptionistWindow(string username) : base("Recepcionista - " + username)
         {
-            _receptionist = new Receptionist(username, DbController.CargarArchivo());
+            _receptionist = new Receptionist(username, DbController.ReadFile());
             SetDefaultSize(1024, 768);
             SetPosition(WindowPosition.Center);
             DeleteEvent += delegate
@@ -362,6 +362,7 @@ namespace ReservationApp
                 cancelButton.Clicked += (sender, e) =>
                 {
                     _receptionist.UndoBook(booking);
+                    LoadBookingListPanel();
                 };
 
                 // Establecer estilo para el botón cancelar
