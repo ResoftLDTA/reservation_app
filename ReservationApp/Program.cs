@@ -1,6 +1,5 @@
 ﻿using System;
 using Gtk;
-
 namespace ReservationApp;
 
 public class Program
