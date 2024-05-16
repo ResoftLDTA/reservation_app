@@ -15,7 +15,11 @@ namespace ReservationApp
 
             SetDefaultSize(1024, 768);
             SetPosition(WindowPosition.Center);
-            DeleteEvent += delegate { Application.Quit(); };
+            DeleteEvent += delegate
+            {
+                DbController.SaveFile(_receptionist.Db);
+                Application.Quit();
+            };
 
             // Crear un VBox para dividir la ventana en una barra de navegación y una área principal
             VBox mainContainer = new VBox(false, 0);
@@ -89,7 +93,7 @@ namespace ReservationApp
         private TreeView CreateRoomTreeView()
         {
             // Configurar el store para el TreeView
-            roomStore = new ListStore(typeof(string), typeof(int), typeof(int), typeof(string));
+            roomStore = new ListStore(typeof(string), typeof(int), typeof(bool));
             TreeView treeView = new TreeView(roomStore);
 
             // Definir las columnas
@@ -98,24 +102,18 @@ namespace ReservationApp
             roomTypeColumn.PackStart(roomTypeCell, true);
             roomTypeColumn.AddAttribute(roomTypeCell, "text", 0);
 
-            TreeViewColumn roomNumberColumn = new TreeViewColumn { Title = "Número de habitación" };
-            CellRendererText roomNumberCell = new CellRendererText();
-            roomNumberColumn.PackStart(roomNumberCell, true);
-            roomNumberColumn.AddAttribute(roomNumberCell, "text", 1);
-
             TreeViewColumn idColumn = new TreeViewColumn { Title = "ID" };
             CellRendererText idCell = new CellRendererText();
             idColumn.PackStart(idCell, true);
-            idColumn.AddAttribute(idCell, "text", 2);
+            idColumn.AddAttribute(idCell, "text", 1);
 
             TreeViewColumn stateColumn = new TreeViewColumn { Title = "Estado" };
             CellRendererText stateCell = new CellRendererText();
             stateColumn.PackStart(stateCell, true);
-            stateColumn.AddAttribute(stateCell, "text", 3);
+            stateColumn.AddAttribute(stateCell, "text", 2);
 
             // Añadir las columnas al TreeView
             treeView.AppendColumn(roomTypeColumn);
-            treeView.AppendColumn(roomNumberColumn);
             treeView.AppendColumn(idColumn);
             treeView.AppendColumn(stateColumn);
 
