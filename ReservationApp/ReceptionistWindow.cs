@@ -122,6 +122,8 @@ namespace ReservationApp
             }
         }
 
+
+
         private void LoadAvailabilityPanel()
         {
             // Limpiar el área principal
@@ -355,7 +357,18 @@ namespace ReservationApp
                 Label endLabel = new Label($"Fin: {booking.End}");
                 Label priceLabel = new Label($"Precio Total: {booking.Price}");
 
-                // Crear una disposición para los detalles de la reserva
+                // Botón para cancelar la reserva
+                Button cancelButton = new Button("Cancelar Reserva");
+                cancelButton.Clicked += (sender, e) =>
+                {
+                    _receptionist.UndoBook(booking);
+                };
+
+                // Establecer estilo para el botón cancelar
+                cancelButton.ModifyBg(StateType.Normal, new Gdk.Color(255, 99, 71)); // Rojo
+                cancelButton.ModifyBg(StateType.Prelight, new Gdk.Color(255, 69, 0)); // Tonos más oscuros al pasar el mouse
+
+                // Añadir detalles de la reserva y botón de cancelar al marco
                 VBox bookingDetailsBox = new VBox();
                 bookingDetailsBox.PackStart(bookingIdLabel, false, false, 0);
                 bookingDetailsBox.PackStart(clientLabel, false, false, 0);
@@ -363,8 +376,9 @@ namespace ReservationApp
                 bookingDetailsBox.PackStart(startLabel, false, false, 0);
                 bookingDetailsBox.PackStart(endLabel, false, false, 0);
                 bookingDetailsBox.PackStart(priceLabel, false, false, 0);
+                bookingDetailsBox.PackStart(cancelButton, false, false, 5);
 
-                // Agregar los detalles de la reserva al marco
+                // Agregar los detalles de la reserva y el botón de cancelar al marco
                 bookingFrame.Add(bookingDetailsBox);
 
                 // Agregar el marco a la factura
@@ -381,6 +395,7 @@ namespace ReservationApp
             // Mostrar todo
             mainArea.ShowAll();
         }
+
 
         private void ClearMainArea()
         {
