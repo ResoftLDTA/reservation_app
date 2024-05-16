@@ -1,16 +1,15 @@
-﻿using Gtk;
+﻿using System;
+using Gtk;
+namespace ReservationApp;
 
-namespace ReservationApp
+public class Program
 {
-    public class Program
+    static void Main()
     {
-        public static void Main()
-        {
-            Application.Init();
-            BuscarReservaScreen search = new BuscarReservaScreen();
-            ReservaMuestraScreen screen = new ReservaMuestraScreen();
-            screen.ShowAll();
-            Application.Run();
-        }
+        DbHotel dbHotel = new DbHotel();
+        Application.Init();
+        MainWindow win = new MainWindow();
+        win.Show();
+        Application.Run();
     }
 }
