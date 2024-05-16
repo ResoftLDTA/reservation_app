@@ -8,6 +8,7 @@ namespace ReservationApp
     {
         private Receptionist _receptionist;
         private ListStore roomStore;
+        private VBox mainArea; // Contenedor principal donde cambiaremos los subpaneles
 
         public ReceptionistWindow(string username) : base("Recepcionista - " + username)
         {
@@ -45,15 +46,15 @@ namespace ReservationApp
 
             Button availabilityButton = new Button("Ver disponibilidad");
             navBar.PackStart(availabilityButton, false, false, 10);
-            
+
             Button bookRoomButton = new Button("Reservar Habitación");
             navBar.PackStart(bookRoomButton, false, false, 10);
-            
+
             Button calculateBookingButton = new Button("Calcular Reserva");
             navBar.PackStart(calculateBookingButton, false, false, 10);
 
             // Crear el área principal
-            VBox mainArea = new VBox(false, 10)
+            mainArea = new VBox(false, 10)
             {
                 Margin = 10
             };
@@ -62,21 +63,23 @@ namespace ReservationApp
             Label welcomeLabel = new Label("Bienvenido, " + username);
             mainArea.PackStart(welcomeLabel, false, false, 10);
 
-            // Añadir título
-            Label titleLabel = new Label
+            // Evento del botón "Ver disponibilidad"
+            availabilityButton.Clicked += (sender, e) =>
             {
-                Text = "Ver habitaciones",
-                Markup = "<span size='large'>Ver habitaciones</span>"
+                LoadAvailabilityPanel();
             };
-            mainArea.PackStart(titleLabel, false, false, 10);
 
-            // Crear la tabla de habitaciones
-            TreeView roomTreeView = CreateRoomTreeView();
+            // Evento del botón "Reservar Habitación"
+            bookRoomButton.Clicked += (sender, e) =>
+            {
+                LoadBookRoomPanel();
+            };
 
-            // Añadir tabla de habitaciones al área principal
-            ScrolledWindow scrolledWindow = new ScrolledWindow();
-            scrolledWindow.Add(roomTreeView);
-            mainArea.PackStart(scrolledWindow, true, true, 10);
+            // Evento del botón "Calcular Reserva"
+            calculateBookingButton.Clicked += (sender, e) =>
+            {
+                LoadCalculateBookingPanel();
+            };
 
             // Añadir barra lateral y área principal al contenedor principal
             contentBox.PackStart(navBar, false, false, 0);
@@ -86,16 +89,13 @@ namespace ReservationApp
             mainContainer.PackStart(contentBox, true, true, 0);
             Add(mainContainer);
 
-            // Cargar datos en la tabla
-            LoadRoomData();
-
             ShowAll();
         }
 
         private TreeView CreateRoomTreeView()
         {
             // Configurar el store para el TreeView
-            roomStore = new ListStore(typeof(string), typeof(int), typeof(bool));
+            roomStore = new ListStore(typeof(string), typeof(int), typeof(string));
             TreeView treeView = new TreeView(roomStore);
 
             // Definir las columnas
@@ -124,10 +124,154 @@ namespace ReservationApp
 
         private void LoadRoomData()
         {
+            // Limpiar datos anteriores
+            roomStore.Clear();
+
             // Añadir datos al ListStore
             foreach (Room room in _receptionist.Db.Rooms)
             {
-                roomStore.AppendValues(room.Type.Type, room.Id, room.occupied);
+                roomStore.AppendValues(room.Type.Type, room.Id, room.occupied ? "Ocupada" : "Disponible");
+            }
+        }
+
+        private void LoadAvailabilityPanel()
+        {
+            // Limpiar el área principal
+            ClearMainArea();
+
+            // Añadir título
+            Label titleLabel = new Label
+            {
+                Text = "Ver habitaciones",
+                Markup = "<span size='large'>Ver habitaciones</span>"
+            };
+            mainArea.PackStart(titleLabel, false, false, 10);
+
+            // Crear la tabla de habitaciones
+            TreeView roomTreeView = CreateRoomTreeView();
+
+            // Añadir la tabla de habitaciones al área principal
+            ScrolledWindow scrolledWindow = new ScrolledWindow();
+            scrolledWindow.Add(roomTreeView);
+            mainArea.PackStart(scrolledWindow, true, true, 10);
+
+            // Cargar los datos
+            LoadRoomData();
+            mainArea.ShowAll();
+        }
+
+        private void LoadBookRoomPanel()
+        {
+            // Limpiar el área principal
+            ClearMainArea();
+
+            // Añadir título
+            Label titleLabel = new Label
+            {
+                Text = "Reservar Habitación",
+                Markup = "<span size='large'>Reservar Habitación</span>"
+            };
+            mainArea.PackStart(titleLabel, false, false, 10);
+
+            // Formularios para reservar una habitación
+            Label nameLabel = new Label("Nombre:");
+            Entry nameEntry = new Entry();
+            Label roomIdLabel = new Label("ID de habitación:");
+            Entry roomIdEntry = new Entry();
+            Label dateInLabel = new Label("Fecha de entrada:");
+            Entry dateInEntry = new Entry();
+            Label dateOutLabel = new Label("Fecha de salida:");
+            Entry dateOutEntry = new Entry();
+
+            Button submitButton = new Button("Reservar");
+            submitButton.Clicked += (sender, e) =>
+            {
+                // Lógica para añadir reserva
+                string name = nameEntry.Text;
+                int roomId = Int32.Parse(roomIdEntry.Text);
+                DateTime dateIn = DateTime.Parse(dateInEntry.Text);
+                DateTime dateOut = DateTime.Parse(dateOutEntry.Text);
+                // _receptionist.Book(name, roomId, dateIn, dateOut);
+            };
+
+            // Añadir formularios al área principal
+            mainArea.PackStart(nameLabel, false, false, 10);
+            mainArea.PackStart(nameEntry, false, false, 10);
+            mainArea.PackStart(roomIdLabel, false, false, 10);
+            mainArea.PackStart(roomIdEntry, false, false, 10);
+            mainArea.PackStart(dateInLabel, false, false, 10);
+            mainArea.PackStart(dateInEntry, false, false, 10);
+            mainArea.PackStart(dateOutLabel, false, false, 10);
+            mainArea.PackStart(dateOutEntry, false, false, 10);
+            mainArea.PackStart(submitButton, false, false, 10);
+
+            mainArea.ShowAll();
+        }
+
+        private void LoadCalculateBookingPanel()
+        {
+            // Limpiar el área principal
+            ClearMainArea();
+
+            // Añadir título
+            Label titleLabel = new Label
+            {
+                Text = "Calcular Reserva",
+                Markup = "<span size='large'>Calcular Reserva</span>"
+            };
+            mainArea.PackStart(titleLabel, false, false, 10);
+
+            // Formularios para calcular una reserva
+            Label nameLabel = new Label("Nombre:");
+            Entry nameEntry = new Entry();
+            Label roomIdLabel = new Label("ID de habitación:");
+            Entry roomIdEntry = new Entry();
+            Label dateInLabel = new Label("Fecha de entrada:");
+            Entry dateInEntry = new Entry();
+            Label dateOutLabel = new Label("Fecha de salida:");
+            Entry dateOutEntry = new Entry();
+
+            Button calculateButton = new Button("Calcular");
+            calculateButton.Clicked += (sender, e) =>
+            {
+                // Lógica para calcular reserva (puedes añadir funcionalidad aquí)
+                string name = nameEntry.Text;
+                int roomId = Int32.Parse(roomIdEntry.Text);
+                DateTime dateIn = DateTime.Parse(dateInEntry.Text);
+                DateTime dateOut = DateTime.Parse(dateOutEntry.Text);
+
+                // Muestra el resultado, puedes reemplazar esto con funcionalidad real
+                MessageDialog resultDialog = new MessageDialog(
+                    this,
+                    DialogFlags.Modal,
+                    MessageType.Info,
+                    ButtonsType.Ok,
+                    $"Calculando reserva para {name} en la habitación {roomId} desde {dateIn} hasta {dateOut}. Funcionalidad aún no implementada."
+                );
+                resultDialog.Run();
+                resultDialog.Destroy();
+            };
+
+            // Añadir formularios al área principal
+            mainArea.PackStart(nameLabel, false, false, 10);
+            mainArea.PackStart(nameEntry, false, false, 10);
+            mainArea.PackStart(roomIdLabel, false, false, 10);
+            mainArea.PackStart(roomIdEntry, false, false, 10);
+            mainArea.PackStart(dateInLabel, false, false, 10);
+            mainArea.PackStart(dateInEntry, false, false, 10);
+            mainArea.PackStart(dateOutLabel, false, false, 10);
+            mainArea.PackStart(dateOutEntry, false, false, 10);
+            mainArea.PackStart(calculateButton, false, false, 10);
+
+            mainArea.ShowAll();
+        }
+
+        private void ClearMainArea()
+        {
+            foreach (Widget widget in mainArea)
+            {
+                mainArea.Remove(widget);
+                widget.Destroy();
             }
         }
     }
