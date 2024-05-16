@@ -2,24 +2,30 @@ using Gtk;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ReservationApp
 {
     public class ReceptionistWindow : Window
     {
         private Receptionist _receptionist;
-        private DbHotel _dbHotel;
         private ListStore roomStore;
         private VBox mainArea; // Contenedor principal donde cambiaremos los subpaneles
+        private List<RoomType> _roomTypes = new List<RoomType>
+        {
+            RoomType.Simple, RoomType.Double, RoomType.Matrimonial
+        };
 
         public ReceptionistWindow(string username) : base("Recepcionista - " + username)
         {
             _receptionist = new Receptionist(username, DbController.CargarArchivo());
-            _dbHotel = DbController.CargarArchivo();
-
             SetDefaultSize(1024, 768);
             SetPosition(WindowPosition.Center);
-            DeleteEvent += delegate { Application.Quit(); };
+            DeleteEvent += delegate
+            {
+                DbController.SaveFile(_receptionist.Db);
+                Application.Quit();
+            };
 
             // Crear un VBox para dividir la ventana en una barra de navegación y una área principal
             VBox mainContainer = new VBox(false, 0);
@@ -78,7 +84,7 @@ namespace ReservationApp
                 LoadBookRoomPanel();
             };
 
-            // Evento del botón "Calcular Reserva"
+            // Evento del botón "Ver reservas activas"
             loadBookingsButton.Clicked += (sender, e) =>
             {
                 LoadBookingListPanel();
@@ -179,33 +185,67 @@ namespace ReservationApp
             // Formularios para reservar una habitación
             Label nameLabel = new Label("Nombre:");
             Entry nameEntry = new Entry();
-            Label roomIdLabel = new Label("ID de habitación:");
-            Entry roomIdEntry = new Entry();
+
+            Label clientIdLabel = new Label("ID del cliente:");
+            Entry clientIdEntry = new Entry();
+
+            Label roomTypeLabel = new Label("Tipo de habitación:");
+            ComboBoxText roomTypeComboBox = new ComboBoxText();
+            foreach (var roomType in _roomTypes)
+            {
+                roomTypeComboBox.AppendText(roomType.Type);
+            }
+
             Label dateInLabel = new Label("Fecha de entrada:");
-            Entry dateInEntry = new Entry();
+            Calendar dateInCalendar = new Calendar();
+
             Label dateOutLabel = new Label("Fecha de salida:");
-            Entry dateOutEntry = new Entry();
+            Calendar dateOutCalendar = new Calendar();
 
             Button submitButton = new Button("Reservar");
             submitButton.Clicked += (sender, e) =>
             {
-                // Lógica para añadir reserva
+                // Validar campos requeridos
+                if (string.IsNullOrWhiteSpace(nameEntry.Text) || string.IsNullOrWhiteSpace(clientIdEntry.Text) || 
+                    roomTypeComboBox.Active == -1 || !uint.TryParse(clientIdEntry.Text, out uint clientId))
+                {
+                    MessageDialog errorDialog = new MessageDialog(this, DialogFlags.Modal, MessageType.Error, ButtonsType.Ok, "Por favor completa todos los campos correctamente.");
+                    errorDialog.Run();
+                    errorDialog.Destroy();
+                    return;
+                }
+                
+                // Validar que las fechas sean válidas
+                DateTime dateIn = new DateTime(dateInCalendar.Date.Year, dateInCalendar.Date.Month + 1, dateInCalendar.Date.Day);
+                DateTime dateOut = new DateTime(dateOutCalendar.Date.Year, dateOutCalendar.Date.Month + 1, dateOutCalendar.Date.Day);
+                if (dateOut <= dateIn)
+                {
+                    MessageDialog errorDialog = new MessageDialog(this, DialogFlags.Modal, MessageType.Error, ButtonsType.Ok, "La fecha de salida debe ser posterior a la fecha de entrada.");
+                    errorDialog.Run();
+                    errorDialog.Destroy();
+                    return;
+                }
+
+                // Extraer datos del formulario
                 string name = nameEntry.Text;
-                int roomId = Int32.Parse(roomIdEntry.Text);
-                DateTime dateIn = DateTime.Parse(dateInEntry.Text);
-                DateTime dateOut = DateTime.Parse(dateOutEntry.Text);
-                // _receptionist.Book(name, roomId, dateIn, dateOut);
+                RoomType roomType = _roomTypes.First(roomType => roomType.Type == roomTypeComboBox.ActiveText);
+                uint bookedNights = (uint)(dateOut - dateIn).Days;
+
+                // Añade la lógica para reservar la habitación
+                _receptionist.Book(name, clientId, dateIn, bookedNights, roomType);
             };
 
             // Añadir formularios al área principal
             mainArea.PackStart(nameLabel, false, false, 10);
             mainArea.PackStart(nameEntry, false, false, 10);
-            mainArea.PackStart(roomIdLabel, false, false, 10);
-            mainArea.PackStart(roomIdEntry, false, false, 10);
+            mainArea.PackStart(clientIdLabel, false, false, 10);
+            mainArea.PackStart(clientIdEntry, false, false, 10);
+            mainArea.PackStart(roomTypeLabel, false, false, 10);
+            mainArea.PackStart(roomTypeComboBox, false, false, 10);
             mainArea.PackStart(dateInLabel, false, false, 10);
-            mainArea.PackStart(dateInEntry, false, false, 10);
+            mainArea.PackStart(dateInCalendar, false, false, 10);
             mainArea.PackStart(dateOutLabel, false, false, 10);
-            mainArea.PackStart(dateOutEntry, false, false, 10);
+            mainArea.PackStart(dateOutCalendar, false, false, 10);
             mainArea.PackStart(submitButton, false, false, 10);
 
             mainArea.ShowAll();
@@ -224,22 +264,14 @@ namespace ReservationApp
             };
             mainArea.PackStart(titleLabel, false, false, 10);
 
-            // Obtener las reservas del objeto _dbHotel
-            List<Booking> bookings = _dbHotel.Bookings;
-
             // Crear un contenedor para mostrar las reservas y el total
             VBox invoiceBox = new VBox();
             mainArea.PackStart(invoiceBox, true, true, 10);
 
             // Iterar sobre las reservas y agregarlas a la factura
             double totalAmount = 0;
-            foreach (var booking in bookings)
+            foreach (var booking in _receptionist.Db.Bookings)
             {
-                // Calcular la duración de la reserva
-                TimeSpan duration = booking.End - booking.Start;
-
-                // Calcular el precio total de la reserva
-                double totalPrice = duration.Days * booking.Room.Type.Price;
 
                 // Crear un marco para la reserva
                 Frame bookingFrame = new Frame();
@@ -252,7 +284,7 @@ namespace ReservationApp
                 Label roomLabel = new Label($"Habitación: {booking.Room.Id}");
                 Label startLabel = new Label($"Inicio: {booking.Start}");
                 Label endLabel = new Label($"Fin: {booking.End}");
-                Label priceLabel = new Label($"Precio Total: {totalPrice}");
+                Label priceLabel = new Label($"Precio Total: {booking.Price}");
 
                 // Crear una disposición para los detalles de la reserva
                 VBox bookingDetailsBox = new VBox();
@@ -270,7 +302,7 @@ namespace ReservationApp
                 invoiceBox.PackStart(bookingFrame, false, false, 10);
 
                 // Agregar el precio total al total general
-                totalAmount += totalPrice;
+                totalAmount += booking.Price;
             }
 
             // Mostrar el total general
