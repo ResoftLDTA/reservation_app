@@ -211,15 +211,40 @@ namespace ReservationApp
             Calendar dateOutCalendar = new Calendar();
             Button submitButton = new Button("Reservar");
 
+            // Evento para permitir solo números en clientIdEntry
+            clientIdEntry.Changed += (sender, e) =>
+            {
+                // Guardar la posición actual del cursor
+                int cursorPos = clientIdEntry.Position;
+                string text = clientIdEntry.Text;
+                string filteredText = "";
+
+                // Filtrar caracteres no numéricos
+                foreach (char c in text)
+                {
+                    if (char.IsDigit(c))
+                    {
+                        filteredText += c;
+                    }
+                }
+
+                if (text != filteredText)
+                {
+                    clientIdEntry.Text = filteredText;
+                    // Restaurar la posición del cursor
+                    clientIdEntry.Position = cursorPos - 1;
+                }
+            };
+
             // Añadir el evento del botón para reservar
             submitButton.Clicked += (sender, e) =>
             {
                 // Validar campos requeridos
                 if (string.IsNullOrWhiteSpace(nameEntry.Text) || string.IsNullOrWhiteSpace(clientIdEntry.Text) ||
-                    roomTypeComboBox.Active == -1 || !uint.TryParse(clientIdEntry.Text, out uint clientId))
+                    roomTypeComboBox.Active == -1)
                 {
                     MessageDialog errorDialog = new MessageDialog(this, DialogFlags.Modal, MessageType.Error,
-                        ButtonsType.Ok, "Por favor completa todos los campos correctamente.");
+                        ButtonsType.Ok, "Por favor llena todos los campos.");
                     errorDialog.Run();
                     errorDialog.Destroy();
                     return;
@@ -239,13 +264,24 @@ namespace ReservationApp
                     return;
                 }
 
-                // Extraer datos del formulario
-                string name = nameEntry.Text;
-                RoomType roomType = _roomTypes.First(roomType => roomType.Type == roomTypeComboBox.ActiveText);
-                uint bookedNights = (uint)(dateOut - dateIn).Days;
+                try
+                {
+                    // Extraer datos del formulario
+                    string name = nameEntry.Text;
+                    RoomType roomType = _roomTypes.First(roomType => roomType.Type == roomTypeComboBox.ActiveText);
+                    uint bookedNights = (uint)(dateOut - dateIn).Days;
 
-                // Añade la lógica para reservar la habitación
-                _receptionist.Book(name, clientId, dateIn, bookedNights, roomType);
+                    // Intenta reservar la habitación
+                    _receptionist.Book(name, uint.Parse(clientIdEntry.Text), dateIn, bookedNights, roomType);
+                }
+                catch (Exception ex)
+                {
+                    // Mostrar un mensaje de error si no hay habitaciones disponibles
+                    MessageDialog errorDialog = new MessageDialog(this, DialogFlags.Modal, MessageType.Error,
+                        ButtonsType.Ok, $"Ocurrió un error al intentar reservar una habitación: {ex.Message}");
+                    errorDialog.Run();
+                    errorDialog.Destroy();
+                }
             };
 
             // Añadir componentes a la columna 2
@@ -284,7 +320,9 @@ namespace ReservationApp
 
                 uint bookedNights = (uint)(dateOut - dateIn).Days;
                 RoomType roomType = _roomTypes.First(rt => rt.Type == roomTypeComboBox.ActiveText);
-                double cost = bookedNights * roomType.Price; // Suponiendo que RoomType tiene una propiedad CostPerNight
+                double
+                    cost = bookedNights *
+                           roomType.Price; // Suponiendo que RoomType tiene una propiedad CostPerNight
 
                 costLabel.Text = $"Costo de la reserva: ${cost:F2}";
             }
