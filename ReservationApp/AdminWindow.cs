@@ -7,7 +7,7 @@ namespace ReservationApp
     public class AdminWindow : Window
     {
         private Admin _admin;
-        private VBox mainArea;
+        private VBox _mainArea;
 
         public AdminWindow(string username) : base("Administrador - " + username)
         {
@@ -39,11 +39,11 @@ namespace ReservationApp
             salesButton.Clicked += (sender, e) => ShowMonthlySales();
 
             // Crear el área principal de contenido
-            mainArea = new VBox(false, 10) { Margin = 10 };
+            _mainArea = new VBox(false, 10) { Margin = 10 };
 
             // Añadir VBox y mainArea al HBox principal
             mainContainer.PackStart(navBar, false, false, 0);
-            mainContainer.PackStart(mainArea, true, true, 0);
+            mainContainer.PackStart(_mainArea, true, true, 0);
 
             // Añadir el HBox principal a la ventana
             Add(mainContainer);
@@ -84,16 +84,16 @@ namespace ReservationApp
             // Añadir el TreeView dentro de un ScrolledWindow para la área principal
             ScrolledWindow scrolledWindow = new ScrolledWindow();
             scrolledWindow.Add(salesTreeView);
-            mainArea.PackStart(scrolledWindow, true, true, 10);
+            _mainArea.PackStart(scrolledWindow, true, true, 10);
 
-            mainArea.ShowAll();
+            _mainArea.ShowAll();
         }
 
         private void ClearMainArea()
         {
-            foreach (Widget widget in mainArea)
+            foreach (Widget widget in _mainArea)
             {
-                mainArea.Remove(widget);
+                _mainArea.Remove(widget);
                 widget.Destroy();
             }
         }
