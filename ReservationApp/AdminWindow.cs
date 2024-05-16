@@ -26,11 +26,16 @@ namespace ReservationApp
             Label welcomeLabel = new Label("Bienvenido, " + username);
             navBar.PackStart(welcomeLabel, false, false, 10);
 
+            // Botón para volver a inicio
+            Button homeButton = new Button("Inicio") { Expand = false };
+            navBar.PackStart(homeButton, false, false, 10);
+
             // Botón para mostrar ventas por mes
-            Button salesButton = new Button("Mostrar Ventas por Mes") { Expand = false }; // Cambiado el expand a false
+            Button salesButton = new Button("Mostrar Ventas por Mes") { Expand = false };
             navBar.PackStart(salesButton, false, false, 10);
 
-            // Añadir evento del botón
+            // Añadir eventos de los botones
+            homeButton.Clicked += (sender, e) => ReturnToMainWindow();
             salesButton.Clicked += (sender, e) => ShowMonthlySales();
 
             // Crear el área principal de contenido
@@ -98,6 +103,19 @@ namespace ReservationApp
             // Método auxiliar para obtener el nombre del mes
             DateTime date = new DateTime(1, (int)month, 1);
             return date.ToString("MMMM");
+        }
+
+        private void ReturnToMainWindow()
+        {
+            // Guardar datos antes de salir
+            DbController.SaveFile(_admin.Db);
+
+            // Destruir la ventana actual
+            this.Destroy();
+
+            // Crear una nueva instancia de MainWindow y mostrarla
+            MainWindow mainWindow = new MainWindow();
+            mainWindow.Show();
         }
     }
 }
