@@ -11,7 +11,7 @@ namespace ReservationApp
 
         public AdminWindow(string username) : base("Administrador - " + username)
         {
-            _admin = new Admin(username, DbController.CargarArchivo());
+            _admin = new Admin(username, DbController.ReadFile());
             SetDefaultSize(800, 600);
             SetPosition(WindowPosition.Center);
             DeleteEvent += delegate { DbController.SaveFile(_admin.Db); Application.Quit(); };
