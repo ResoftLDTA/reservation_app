@@ -1,4 +1,5 @@
 ﻿using System;
+using Gtk;
 
 namespace ReservationApp;
 
@@ -6,12 +7,10 @@ public class Program
 {
     static void Main()
     {
-        Admin admin = new Admin("Juan Carlos", DbController.CargarArchivo());
-        Frontend f = new Frontend(admin);
-        bool run = true;
-        f.Run();
-        
-
-        DbController.SaveFile(admin.Db);
+        DbHotel dbHotel = new DbHotel();
+        Application.Init();
+        MainWindow win = new MainWindow();
+        win.Show();
+        Application.Run();
     }
 }
