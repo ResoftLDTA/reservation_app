@@ -17,43 +17,46 @@ namespace ReservationApp
             SetPosition(WindowPosition.Center);
             DeleteEvent += delegate { Application.Quit(); };
 
-            // Create main container
-            HBox mainContainer = new HBox(false, 0);
+            // Crear un VBox para dividir la ventana en una barra de navegación y una área principal
+            VBox mainContainer = new VBox(false, 0);
 
-            // Create sidebar
-            VBox sidebar = new VBox(false, 10)
+            // Crear HBox para añadir la barra lateral y el área principal
+            HBox contentBox = new HBox(false, 0);
+
+            // Crear barra lateral de navegación
+            VBox navBar = new VBox(false, 10)
             {
                 Margin = 10
             };
 
-            // Add elements to sidebar
+            // Añadir elementos a la barra lateral
             Label headerLabel = new Label("RE SOFT S.A.S.")
             {
                 Markup = "<span size='xx-large' weight='bold'>RE SOFT S.A.S.</span>",
                 Justify = Justification.Center
             };
-            sidebar.PackStart(headerLabel, false, false, 20);
-            
+            navBar.PackStart(headerLabel, false, false, 20);
+
             Label hotelLabel = new Label("Hotel XXXX");
-            sidebar.PackStart(hotelLabel, false, false, 10);
+            navBar.PackStart(hotelLabel, false, false, 10);
 
             Button homeButton = new Button("Inicio");
-            sidebar.PackStart(homeButton, false, false, 10);
+            navBar.PackStart(homeButton, false, false, 10);
 
             Button availabilityButton = new Button("Ver disponibilidad");
-            sidebar.PackStart(availabilityButton, false, false, 10);
+            navBar.PackStart(availabilityButton, false, false, 10);
 
-            // Create main area
+            // Crear el área principal
             VBox mainArea = new VBox(false, 10)
             {
                 Margin = 10
             };
 
-            // Add welcome label
+            // Añadir etiqueta de bienvenida
             Label welcomeLabel = new Label("Bienvenido, " + username);
             mainArea.PackStart(welcomeLabel, false, false, 10);
 
-            // Add title label
+            // Añadir título
             Label titleLabel = new Label
             {
                 Text = "Ver habitaciones",
@@ -61,30 +64,35 @@ namespace ReservationApp
             };
             mainArea.PackStart(titleLabel, false, false, 10);
 
-            // Create room table
+            // Crear la tabla de habitaciones
             TreeView roomTreeView = CreateRoomTreeView();
 
-            // Add room table to main area
+            // Añadir tabla de habitaciones al área principal
             ScrolledWindow scrolledWindow = new ScrolledWindow();
             scrolledWindow.Add(roomTreeView);
             mainArea.PackStart(scrolledWindow, true, true, 10);
 
-            // Add sidebar and main area to the main container
-            mainContainer.PackStart(sidebar, false, false, 0);
-            mainContainer.PackStart(mainArea, true, true, 0);
+            // Añadir barra lateral y área principal al contenedor principal
+            contentBox.PackStart(navBar, false, false, 0);
+            contentBox.PackStart(mainArea, true, true, 0);
 
-            // Add main container to the window
+            // Añadir contenedor principal a la ventana
+            mainContainer.PackStart(contentBox, true, true, 0);
             Add(mainContainer);
+
+            // Cargar datos en la tabla
+            LoadRoomData();
+
             ShowAll();
         }
 
         private TreeView CreateRoomTreeView()
         {
-            // Set up the store for the tree view
-            roomStore = new ListStore(typeof(string), typeof(int), typeof(int), typeof(int), typeof(string));
+            // Configurar el store para el TreeView
+            roomStore = new ListStore(typeof(string), typeof(int), typeof(int), typeof(string));
             TreeView treeView = new TreeView(roomStore);
 
-            // Define the columns
+            // Definir las columnas
             TreeViewColumn roomTypeColumn = new TreeViewColumn { Title = "Tipo de habitación" };
             CellRendererText roomTypeCell = new CellRendererText();
             roomTypeColumn.PackStart(roomTypeCell, true);
@@ -105,20 +113,18 @@ namespace ReservationApp
             stateColumn.PackStart(stateCell, true);
             stateColumn.AddAttribute(stateCell, "text", 3);
 
-            // Append the columns to the tree view
+            // Añadir las columnas al TreeView
             treeView.AppendColumn(roomTypeColumn);
             treeView.AppendColumn(roomNumberColumn);
             treeView.AppendColumn(idColumn);
             treeView.AppendColumn(stateColumn);
-
-            // Load data into the store
-            LoadRoomData();
 
             return treeView;
         }
 
         private void LoadRoomData()
         {
+            // Añadir datos al ListStore
             foreach (Room room in _receptionist.Db.Rooms)
             {
                 roomStore.AppendValues(room.Type.Type, room.Id, room.occupied);
