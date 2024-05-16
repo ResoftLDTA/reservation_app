@@ -15,11 +15,7 @@ namespace ReservationApp
 
             SetDefaultSize(1024, 768);
             SetPosition(WindowPosition.Center);
-            DeleteEvent += delegate
-            {
-                DbController.SaveFile(_receptionist.Db);
-                Application.Quit();
-            };
+            DeleteEvent += delegate { Application.Quit(); };
 
             // Crear un VBox para dividir la ventana en una barra de navegación y una área principal
             VBox mainContainer = new VBox(false, 0);
@@ -49,6 +45,12 @@ namespace ReservationApp
 
             Button availabilityButton = new Button("Ver disponibilidad");
             navBar.PackStart(availabilityButton, false, false, 10);
+            
+            Button bookRoomButton = new Button("Reservar Habitación");
+            navBar.PackStart(bookRoomButton, false, false, 10);
+            
+            Button calculateBookingButton = new Button("Calcular Reserva");
+            navBar.PackStart(calculateBookingButton, false, false, 10);
 
             // Crear el área principal
             VBox mainArea = new VBox(false, 10)
