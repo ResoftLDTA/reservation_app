@@ -10,7 +10,7 @@ public class DbController
     private static string _fileName = "dbhotel.json";
     private static string _resoftFolderName = "Resoft";
 
-    public static DbHotel CargarArchivo()
+    public static DbHotel ReadFile()
     {
         string userDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
         Console.WriteLine($"Se detectó la ruta: {userDataPath}");
