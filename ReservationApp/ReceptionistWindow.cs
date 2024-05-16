@@ -169,87 +169,125 @@ namespace ReservationApp
             mainArea.ShowAll();
         }
 
-        private void LoadBookRoomPanel()
-        {
-            // Limpiar el área principal
-            ClearMainArea();
+        private void LoadBookRoomPanel() {
+    // Limpiar el área principal
+    ClearMainArea();
 
-            // Añadir título
-            Label titleLabel = new Label
-            {
-                Text = "Reservar Habitación",
-                Markup = "<span size='large'>Reservar Habitación</span>"
-            };
-            mainArea.PackStart(titleLabel, false, false, 10);
+    // Añadir título
+    Label titleLabel = new Label {
+        Text = "Reservar Habitación",
+        Markup = "<span size='large'>Reservar Habitación</span>"
+    };
+    mainArea.PackStart(titleLabel, false, false, 10);
 
-            // Formularios para reservar una habitación
-            Label nameLabel = new Label("Nombre:");
-            Entry nameEntry = new Entry();
+    // Crear un HBox para dividir en dos columnas
+    HBox columnsBox = new HBox(false, 20);
 
-            Label clientIdLabel = new Label("ID del cliente:");
-            Entry clientIdEntry = new Entry();
+    // Crear las dos columnas como VBoxes
+    VBox column1 = new VBox(false, 10);
+    VBox column2 = new VBox(false, 10);
 
-            Label roomTypeLabel = new Label("Tipo de habitación:");
-            ComboBoxText roomTypeComboBox = new ComboBoxText();
-            foreach (var roomType in _roomTypes)
-            {
-                roomTypeComboBox.AppendText(roomType.Type);
-            }
+    // Componentes de la Columna 1
+    Label nameLabel = new Label("Nombre:");
+    Entry nameEntry = new Entry();
+    Label dateInLabel = new Label("Fecha de entrada:");
+    Calendar dateInCalendar = new Calendar();
+    Label roomTypeLabel = new Label("Tipo de habitación:");
+    ComboBoxText roomTypeComboBox = new ComboBoxText();
+    foreach (var roomType in _roomTypes) {
+        roomTypeComboBox.AppendText(roomType.Type);
+    }
+    Label costLabel = new Label("Costo de la reserva: $0.00");
 
-            Label dateInLabel = new Label("Fecha de entrada:");
-            Calendar dateInCalendar = new Calendar();
+    // Añadir componentes a la columna 1
+    column1.PackStart(nameLabel, false, false, 10);
+    column1.PackStart(nameEntry, false, false, 10);
+    column1.PackStart(dateInLabel, false, false, 10);
+    column1.PackStart(dateInCalendar, false, false, 10);
+    column1.PackStart(roomTypeLabel, false, false, 10);
+    column1.PackStart(roomTypeComboBox, false, false, 10);
+    column1.PackStart(costLabel, false, false, 10);
 
-            Label dateOutLabel = new Label("Fecha de salida:");
-            Calendar dateOutCalendar = new Calendar();
+    // Componentes de la Columna 2
+    Label clientIdLabel = new Label("ID del cliente:");
+    Entry clientIdEntry = new Entry();
+    Label dateOutLabel = new Label("Fecha de salida:");
+    Calendar dateOutCalendar = new Calendar();
+    Button submitButton = new Button("Reservar");
 
-            Button submitButton = new Button("Reservar");
-            submitButton.Clicked += (sender, e) =>
-            {
-                // Validar campos requeridos
-                if (string.IsNullOrWhiteSpace(nameEntry.Text) || string.IsNullOrWhiteSpace(clientIdEntry.Text) || 
-                    roomTypeComboBox.Active == -1 || !uint.TryParse(clientIdEntry.Text, out uint clientId))
-                {
-                    MessageDialog errorDialog = new MessageDialog(this, DialogFlags.Modal, MessageType.Error, ButtonsType.Ok, "Por favor completa todos los campos correctamente.");
-                    errorDialog.Run();
-                    errorDialog.Destroy();
-                    return;
-                }
-                
-                // Validar que las fechas sean válidas
-                DateTime dateIn = new DateTime(dateInCalendar.Date.Year, dateInCalendar.Date.Month + 1, dateInCalendar.Date.Day);
-                DateTime dateOut = new DateTime(dateOutCalendar.Date.Year, dateOutCalendar.Date.Month + 1, dateOutCalendar.Date.Day);
-                if (dateOut <= dateIn)
-                {
-                    MessageDialog errorDialog = new MessageDialog(this, DialogFlags.Modal, MessageType.Error, ButtonsType.Ok, "La fecha de salida debe ser posterior a la fecha de entrada.");
-                    errorDialog.Run();
-                    errorDialog.Destroy();
-                    return;
-                }
-
-                // Extraer datos del formulario
-                string name = nameEntry.Text;
-                RoomType roomType = _roomTypes.First(roomType => roomType.Type == roomTypeComboBox.ActiveText);
-                uint bookedNights = (uint)(dateOut - dateIn).Days;
-
-                // Añade la lógica para reservar la habitación
-                _receptionist.Book(name, clientId, dateIn, bookedNights, roomType);
-            };
-
-            // Añadir formularios al área principal
-            mainArea.PackStart(nameLabel, false, false, 10);
-            mainArea.PackStart(nameEntry, false, false, 10);
-            mainArea.PackStart(clientIdLabel, false, false, 10);
-            mainArea.PackStart(clientIdEntry, false, false, 10);
-            mainArea.PackStart(roomTypeLabel, false, false, 10);
-            mainArea.PackStart(roomTypeComboBox, false, false, 10);
-            mainArea.PackStart(dateInLabel, false, false, 10);
-            mainArea.PackStart(dateInCalendar, false, false, 10);
-            mainArea.PackStart(dateOutLabel, false, false, 10);
-            mainArea.PackStart(dateOutCalendar, false, false, 10);
-            mainArea.PackStart(submitButton, false, false, 10);
-
-            mainArea.ShowAll();
+    // Añadir el evento del botón para reservar
+    submitButton.Clicked += (sender, e) => {
+        // Validar campos requeridos
+        if (string.IsNullOrWhiteSpace(nameEntry.Text) || string.IsNullOrWhiteSpace(clientIdEntry.Text) ||
+            roomTypeComboBox.Active == -1 || !uint.TryParse(clientIdEntry.Text, out uint clientId)) {
+            MessageDialog errorDialog = new MessageDialog(this, DialogFlags.Modal, MessageType.Error, ButtonsType.Ok, "Por favor completa todos los campos correctamente.");
+            errorDialog.Run();
+            errorDialog.Destroy();
+            return;
         }
+
+        // Validar que las fechas sean válidas
+        DateTime dateIn = new DateTime(dateInCalendar.Date.Year, dateInCalendar.Date.Month + 1, dateInCalendar.Date.Day);
+        DateTime dateOut = new DateTime(dateOutCalendar.Date.Year, dateOutCalendar.Date.Month + 1, dateOutCalendar.Date.Day);
+        if (dateOut <= dateIn) {
+            MessageDialog errorDialog = new MessageDialog(this, DialogFlags.Modal, MessageType.Error, ButtonsType.Ok, "La fecha de salida debe ser posterior a la fecha de entrada.");
+            errorDialog.Run();
+            errorDialog.Destroy();
+            return;
+        }
+
+        // Extraer datos del formulario
+        string name = nameEntry.Text;
+        RoomType roomType = _roomTypes.First(roomType => roomType.Type == roomTypeComboBox.ActiveText);
+        uint bookedNights = (uint)(dateOut - dateIn).Days;
+
+        // Añade la lógica para reservar la habitación
+        _receptionist.Book(name, clientId, dateIn, bookedNights, roomType);
+    };
+
+    // Añadir componentes a la columna 2
+    column2.PackStart(clientIdLabel, false, false, 10);
+    column2.PackStart(clientIdEntry, false, false, 10);
+    column2.PackStart(dateOutLabel, false, false, 10);
+    column2.PackStart(dateOutCalendar, false, false, 10);
+    column2.PackStart(submitButton, false, false, 10);
+
+    // Añadir las columnas al HBox
+    columnsBox.PackStart(column1, true, true, 10);
+    columnsBox.PackStart(column2, true, true, 10);
+
+    // Añadir el HBox con las dos columnas al área principal
+    mainArea.PackStart(columnsBox, true, true, 10);
+
+    // Método para calcular el precio
+    void CalculatePrice() {
+        if (roomTypeComboBox.Active == -1) {
+            costLabel.Text = "Costo de la reserva: $0.00";
+            return;
+        }
+
+        DateTime dateIn = new DateTime(dateInCalendar.Date.Year, dateInCalendar.Date.Month + 1, dateInCalendar.Date.Day);
+        DateTime dateOut = new DateTime(dateOutCalendar.Date.Year, dateOutCalendar.Date.Month + 1, dateOutCalendar.Date.Day);
+        
+        if (dateOut <= dateIn) {
+            costLabel.Text = "Costo de la reserva: $0.00";
+            return;
+        }
+
+        uint bookedNights = (uint)(dateOut - dateIn).Days;
+        RoomType roomType = _roomTypes.First(rt => rt.Type == roomTypeComboBox.ActiveText);
+        double cost = bookedNights * roomType.Price; // Suponiendo que RoomType tiene una propiedad CostPerNight
+
+        costLabel.Text = $"Costo de la reserva: ${cost:F2}";
+    }
+
+    // Añadir eventos para los componentes que afectan el precio
+    dateInCalendar.DaySelected += (sender, e) => CalculatePrice();
+    dateOutCalendar.DaySelected += (sender, e) => CalculatePrice();
+    roomTypeComboBox.Changed += (sender, e) => CalculatePrice();
+
+    mainArea.ShowAll();
+}
 
         private void LoadBookingListPanel() {
     // Limpiar el área principal
