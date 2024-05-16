@@ -11,11 +11,7 @@ namespace ReservationApp
         private Receptionist _receptionist;
         private ListStore roomStore;
         private VBox mainArea; // Contenedor principal donde cambiaremos los subpaneles
-
-        private List<RoomType> _roomTypes = new List<RoomType>
-        {
-            RoomType.Simple, RoomType.Double, RoomType.Matrimonial
-        };
+        private List<RoomType> _roomTypes = new List<RoomType> { RoomType.Simple, RoomType.Double, RoomType.Matrimonial };
 
         public ReceptionistWindow(string username) : base("Recepcionista - " + username)
         {
@@ -35,10 +31,7 @@ namespace ReservationApp
             HBox contentBox = new HBox(false, 0);
 
             // Crear barra lateral de navegación
-            VBox navBar = new VBox(false, 10)
-            {
-                Margin = 10
-            };
+            VBox navBar = new VBox(false, 10) { Margin = 10 };
 
             // Añadir elementos a la barra lateral
             Label headerLabel = new Label("RE SOFT S.A.S.")
@@ -64,22 +57,16 @@ namespace ReservationApp
             navBar.PackStart(loadBookingsButton, false, false, 10);
 
             // Crear el área principal
-            mainArea = new VBox(false, 10)
-            {
-                Margin = 10
-            };
+            mainArea = new VBox(false, 10) { Margin = 10 };
 
             // Añadir etiqueta de bienvenida
             Label welcomeLabel = new Label("Bienvenido, " + username);
             mainArea.PackStart(welcomeLabel, false, false, 10);
 
-            // Evento del botón "Ver disponibilidad"
+            // Eventos de los botones
+            homeButton.Clicked += (sender, e) => { ReturnToMainWindow(); };
             availabilityButton.Clicked += (sender, e) => { LoadAvailabilityPanel(); };
-
-            // Evento del botón "Reservar Habitación"
             bookRoomButton.Clicked += (sender, e) => { LoadBookRoomPanel(); };
-
-            // Evento del botón "Ver reservas activas"
             loadBookingsButton.Clicked += (sender, e) => { LoadBookingListPanel(); };
 
             // Añadir barra lateral y área principal al contenedor principal
@@ -192,7 +179,6 @@ namespace ReservationApp
             {
                 roomTypeComboBox.AppendText(roomType.Type);
             }
-
             Label costLabel = new Label("Costo de la reserva: $0.00");
 
             // Añadir componentes a la columna 1
@@ -240,25 +226,22 @@ namespace ReservationApp
             submitButton.Clicked += (sender, e) =>
             {
                 // Validar campos requeridos
-                if (string.IsNullOrWhiteSpace(nameEntry.Text) || string.IsNullOrWhiteSpace(clientIdEntry.Text) ||
+                if (string.IsNullOrWhiteSpace(nameEntry.Text) ||
+                    string.IsNullOrWhiteSpace(clientIdEntry.Text) ||
                     roomTypeComboBox.Active == -1)
                 {
-                    MessageDialog errorDialog = new MessageDialog(this, DialogFlags.Modal, MessageType.Error,
-                        ButtonsType.Ok, "Por favor llena todos los campos.");
+                    MessageDialog errorDialog = new MessageDialog(this, DialogFlags.Modal, MessageType.Error, ButtonsType.Ok, "Por favor llena todos los campos.");
                     errorDialog.Run();
                     errorDialog.Destroy();
                     return;
                 }
 
                 // Validar que las fechas sean válidas
-                DateTime dateIn = new DateTime(dateInCalendar.Date.Year, dateInCalendar.Date.Month + 1,
-                    dateInCalendar.Date.Day);
-                DateTime dateOut = new DateTime(dateOutCalendar.Date.Year, dateOutCalendar.Date.Month + 1,
-                    dateOutCalendar.Date.Day);
+                DateTime dateIn = new DateTime(dateInCalendar.Date.Year, dateInCalendar.Date.Month + 1, dateInCalendar.Date.Day);
+                DateTime dateOut = new DateTime(dateOutCalendar.Date.Year, dateOutCalendar.Date.Month + 1, dateOutCalendar.Date.Day);
                 if (dateOut <= dateIn)
                 {
-                    MessageDialog errorDialog = new MessageDialog(this, DialogFlags.Modal, MessageType.Error,
-                        ButtonsType.Ok, "La fecha de salida debe ser posterior a la fecha de entrada.");
+                    MessageDialog errorDialog = new MessageDialog(this, DialogFlags.Modal, MessageType.Error, ButtonsType.Ok, "La fecha de salida debe ser posterior a la fecha de entrada.");
                     errorDialog.Run();
                     errorDialog.Destroy();
                     return;
@@ -277,8 +260,7 @@ namespace ReservationApp
                 catch (Exception ex)
                 {
                     // Mostrar un mensaje de error si no hay habitaciones disponibles
-                    MessageDialog errorDialog = new MessageDialog(this, DialogFlags.Modal, MessageType.Error,
-                        ButtonsType.Ok, $"Ocurrió un error al intentar reservar una habitación: {ex.Message}");
+                    MessageDialog errorDialog = new MessageDialog(this, DialogFlags.Modal, MessageType.Error, ButtonsType.Ok, $"Ocurrió un error al intentar reservar una habitación: {ex.Message}");
                     errorDialog.Run();
                     errorDialog.Destroy();
                 }
@@ -307,10 +289,8 @@ namespace ReservationApp
                     return;
                 }
 
-                DateTime dateIn = new DateTime(dateInCalendar.Date.Year, dateInCalendar.Date.Month + 1,
-                    dateInCalendar.Date.Day);
-                DateTime dateOut = new DateTime(dateOutCalendar.Date.Year, dateOutCalendar.Date.Month + 1,
-                    dateOutCalendar.Date.Day);
+                DateTime dateIn = new DateTime(dateInCalendar.Date.Year, dateInCalendar.Date.Month + 1, dateInCalendar.Date.Day);
+                DateTime dateOut = new DateTime(dateOutCalendar.Date.Year, dateOutCalendar.Date.Month + 1, dateOutCalendar.Date.Day);
 
                 if (dateOut <= dateIn)
                 {
@@ -320,10 +300,7 @@ namespace ReservationApp
 
                 uint bookedNights = (uint)(dateOut - dateIn).Days;
                 RoomType roomType = _roomTypes.First(rt => rt.Type == roomTypeComboBox.ActiveText);
-                double
-                    cost = bookedNights *
-                           roomType.Price; // Suponiendo que RoomType tiene una propiedad CostPerNight
-
+                double cost = bookedNights * roomType.Price; // Suponiendo que RoomType tiene una propiedad CostPerNight
                 costLabel.Text = $"Costo de la reserva: ${cost:F2}";
             }
 
@@ -356,17 +333,19 @@ namespace ReservationApp
             scrolledWindow.Add(invoiceBox);
             scrolledWindow.VscrollbarPolicy = PolicyType.Automatic;
             scrolledWindow.HscrollbarPolicy = PolicyType.Automatic;
-
             mainArea.PackStart(scrolledWindow, true, true, 10);
 
             // Iterar sobre las reservas y agregarlas a la factura
             double totalAmount = 0;
+
             foreach (var booking in _receptionist.Db.Bookings)
             {
                 // Crear un marco para la reserva
-                Frame bookingFrame = new Frame();
-                bookingFrame.BorderWidth = 5;
-                bookingFrame.ShadowType = ShadowType.Out;
+                Frame bookingFrame = new Frame
+                {
+                    BorderWidth = 5,
+                    ShadowType = ShadowType.Out
+                };
 
                 // Detalles de la reserva
                 Label bookingIdLabel = new Label($"Reserva #{booking.Id}");
@@ -410,6 +389,20 @@ namespace ReservationApp
                 mainArea.Remove(widget);
                 widget.Destroy();
             }
+        }
+
+        // Nueva función para retornar a la ventana principal
+        private void ReturnToMainWindow()
+        {
+            // Guardar datos antes de salir
+            DbController.SaveFile(_receptionist.Db);
+
+            // Destruir la ventana actual
+            this.Destroy();
+
+            // Crear una nueva instancia de MainWindow y mostrarla
+            MainWindow mainWindow = new MainWindow();
+            mainWindow.Show();
         }
     }
 }
