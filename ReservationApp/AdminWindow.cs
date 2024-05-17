@@ -12,7 +12,7 @@ namespace ReservationApp
         public AdminWindow(string username) : base("Administrador - " + username)
         {
             _admin = new Admin(username, DbController.ReadFile());
-            SetDefaultSize(800, 600);
+            SetDefaultSize(1024, 768);
             SetPosition(WindowPosition.Center);
             DeleteEvent += delegate { DbController.SaveFile(_admin.Db); Application.Quit(); };
 

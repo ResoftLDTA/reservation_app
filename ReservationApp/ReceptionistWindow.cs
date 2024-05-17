@@ -34,9 +34,9 @@ namespace ReservationApp
             VBox navBar = new VBox(false, 10) { Margin = 10 };
 
             // Añadir elementos a la barra lateral
-            Label headerLabel = new Label("RE SOFT S.A.S.")
+            Label headerLabel = new Label("RESOFT S.A.S.")
             {
-                Markup = "<span size='xx-large' weight='bold'>RE SOFT S.A.S.</span>",
+                Markup = "<span size='xx-large' weight='bold'>RESOFT S.A.S.</span>",
                 Justify = Justification.Center
             };
             navBar.PackStart(headerLabel, false, false, 20);
@@ -361,6 +361,7 @@ namespace ReservationApp
                 Button cancelButton = new Button("Cancelar Reserva");
                 cancelButton.Clicked += (sender, e) =>
                 {
+                    booking.Room.occupied = false;
                     _receptionist.UndoBook(booking);
                     LoadBookingListPanel();
                 };
